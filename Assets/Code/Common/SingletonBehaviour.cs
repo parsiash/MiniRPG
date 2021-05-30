@@ -10,6 +10,11 @@ namespace MiniRPG.Common
 
     }
 
+    /// <summary>
+    /// A Generic singleton which can be used for any MonoBehaviour.
+    /// For making a MonoBehaviour T singleton, just make it inherit from SingletonBehaviour<T>.
+    /// Example : GameManager
+    /// </summary>
     public class SingletonBehaviour<T> : SingletonBehaviour where T : SingletonBehaviour
     {
         private static T instance;

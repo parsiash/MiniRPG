@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using MiniRPG.Common;
@@ -10,21 +9,17 @@ namespace MiniRPG.BattleLogic
     /// </summary>
     public class BattleSimulation
     {
-        /// <summary>
-        /// The logger that is used in battle logic simulation.
-        /// </summary>
-        public ILogger logger => _logger;
-
         private const int DEFAULT_PLAYER_COUNT = 2;
-        private ILogger _logger;
-
         private Player[] _players;
+
+        private int _turn;
+        public int Turn => _turn;
 
         private IEntityFactory _entityFactory;
         private IEntityManager _entityManager;
 
-        private int _turn;
-        public int Turn => _turn;
+
+        private ILogger _logger;
 
         public BattleSimulation(BattleInitData battleInitData, ILogger logger)
         {
@@ -92,8 +87,7 @@ namespace MiniRPG.BattleLogic
                 return null;
             }
 
-            //check some other conditions and log accordingly
-
+            //retrieve the attacker unit
             var attacker = _entityManager.GetEntity(data.action.attackerId) as Unit;
             if(attacker == null)
             {
@@ -101,12 +95,14 @@ namespace MiniRPG.BattleLogic
                 return null;
             }
 
+            //check if it's the player's turn
             if(!IsPlayerTurn(attacker.PlayerIndex))
             {
                 _logger.LogError($"Attack Failed for player : {attacker.PlayerIndex}. It is not your turn.");
                 return null;
             }
 
+            //retrieve the target unit
             var target = _entityManager.GetEntity(data.action.attackerId) as Unit;
             if(target == null)
             {
@@ -114,6 +110,7 @@ namespace MiniRPG.BattleLogic
                 return null;
             }
 
+            //compute and apply attack damage
             int attack = attacker.attackComponent.Attack;
             var actualDamage = target.healthComponent.TakeDamage(attack);
 
@@ -161,65 +158,5 @@ namespace MiniRPG.BattleLogic
         {
             _turn++;
         }
-    }
-
-    public class TurnResult
-    {
-        public int turn { get; set; }
-        public TurnEvent[] events { get; set; }
-
-        public TurnResult(int turn, params TurnEvent[] events)
-        {
-            this.turn = turn;
-            this.events = events;
-        }
-    }
-
-
-    public class TurnEvent
-    {
-        public const string ATTACK = "Attack";
-        public string name;
-        public System.Object data;
-
-        public TurnEvent(string name, System.Object data = null)
-        {
-            this.name = name;
-            this.data = data;
-        }
-
-        public Type DataType => data?.GetType();
-    }
-
-    public class AttackResult
-    {
-        public int attackerId { get; private set; }
-        public int targetId { get; private set; }
-        public int originalAttack { get; private set; }
-        public int actualDamage { get; private set; }
-        public int targetFinalHealth { get; private set; }
-
-        public AttackResult(int attackerId, int targetId, int originalAttack, int actualDamage, int targetFinalHealth)
-        {
-            this.attackerId = attackerId;
-            this.targetId = targetId;
-            this.originalAttack = originalAttack;
-            this.actualDamage = actualDamage;
-            this.targetFinalHealth = targetFinalHealth;
-        }
-    }
-
-
-    public class PlayTurnData
-    {
-        public int turn;
-        public int playerIndex;
-        public TurnActionData action;
-    }
-
-    public class TurnActionData
-    {
-        public int attackerId;
-        public int targetId;
     }
 }

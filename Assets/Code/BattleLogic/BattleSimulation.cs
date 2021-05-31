@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MiniRPG.Common;
 
 namespace MiniRPG.BattleLogic
@@ -13,6 +14,8 @@ namespace MiniRPG.BattleLogic
         /// The logger that is used in battle logic simulation.
         /// </summary>
         public ILogger logger => _logger;
+
+        private const int DEFAULT_PLAYER_COUNT = 2;
         private ILogger _logger;
 
         private Player[] _players;
@@ -29,10 +32,11 @@ namespace MiniRPG.BattleLogic
             _entityManager = new EntityManager(logger);
             _logger = logger;
 
-            //create players and units
+            //create players
+            _players = battleInitData.players.Select(pid => CreatePlayer(pid)).ToArray();
         }
 
-        private Unit CreateUnit(UnitInitData unitInitData)
+        private Unit CreateUnit(Player player, UnitInitData unitInitData)
         {
             var unit = _entityFactory.CreateEntity<Unit>(unitInitData.entityId);
 
@@ -40,18 +44,23 @@ namespace MiniRPG.BattleLogic
             unit.AddComponent(new HealthComponent(unitStat.health));
             unit.AddComponent(new AttackComponent(unitStat.attack));
 
+            AddUnit(unit, player);
+
             return unit;
         }
 
         private Player CreatePlayer(PlayerInitData playerInitData)
         {
-            // var units = new List<Unit>();
-            // foreach(var unitInitData in playerInitData.units)
-            // {
-            //     units.Add();
-            // }
+            //create player instance
+            var player = new Player(playerInitData.index);
 
-            // var player = new Player(playerInitData.index, );
+            //create player's initial units
+            foreach(var unitInitData in playerInitData.units)
+            {
+                CreateUnit(player, unitInitData);
+            }
+
+            return player;
         }
 
         public bool IsPlayerTurn(int playerIndex)
@@ -132,10 +141,14 @@ namespace MiniRPG.BattleLogic
                 return;
             }
 
-            _entityManager.AddEntity(unit);
+            AddUnit(unit, player);
+        }
 
+        private void AddUnit(Unit unit, Player player)
+        {
+            _entityManager.AddEntity(unit);
             player.AddUnit(unit);
-            unit.Init(this, player);
+            unit.Init(player);
         }
 
         public void DestroyUnit(Unit unit)

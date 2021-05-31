@@ -22,7 +22,7 @@ namespace MiniRPG.BattleLogic
         public HealthComponent healthComponent => GetComponent<HealthComponent>();
         public bool IsDead => healthComponent.IsDead;
 
-        public void Init(BattleSimulation battleSimulation, Player player)
+        public void Init(Player player)
         {
             _player = player;
         }

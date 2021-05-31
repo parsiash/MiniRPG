@@ -7,10 +7,10 @@ namespace MiniRPG.BattleLogic
         public int index { get; private set; }
         public List<Unit> units { get; private set; }
 
-        public Player(int index, List<Unit> units)
+        public Player(int index)
         {
             this.index = index;
-            this.units = units;
+            units = new List<Unit>();
         }
 
         public void AddUnit(Unit unit)

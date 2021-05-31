@@ -12,5 +12,15 @@ namespace MiniRPG.BattleLogic
             this.index = index;
             this.units = units;
         }
+
+        public void AddUnit(Unit unit)
+        {
+            units.Add(unit);
+        }
+
+        public void RemoveUnit(int id)
+        {
+            units.RemoveAll(u => u.id == id);
+        }
     }
 }

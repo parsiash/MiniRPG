@@ -19,6 +19,11 @@ namespace MiniRPG.Common
         {
             logger.Log(LogType.Error, message);
         }
+
+        public static void LogDebug(this ILogger logger, string message)
+        {
+            logger.Log(LogType.Debug, message);
+        }
     }
 
 

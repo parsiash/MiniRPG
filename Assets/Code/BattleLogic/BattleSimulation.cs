@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using MiniRPG.Common;
 
 namespace MiniRPG.BattleLogic
@@ -16,6 +17,7 @@ namespace MiniRPG.BattleLogic
 
         private Player[] _players;
 
+        private IEntityFactory _entityFactory;
         private IEntityManager _entityManager;
 
         private int _turn;
@@ -23,10 +25,33 @@ namespace MiniRPG.BattleLogic
 
         public BattleSimulation(BattleInitData battleInitData, ILogger logger)
         {
+            _entityFactory = new EntityFactory(this, logger);
             _entityManager = new EntityManager(logger);
-
-            //initialize battle
             _logger = logger;
+
+            //create players and units
+        }
+
+        private Unit CreateUnit(UnitInitData unitInitData)
+        {
+            var unit = _entityFactory.CreateEntity<Unit>(unitInitData.entityId);
+
+            var unitStat = unitInitData.unitStat;
+            unit.AddComponent(new HealthComponent(unitStat.health));
+            unit.AddComponent(new AttackComponent(unitStat.attack));
+
+            return unit;
+        }
+
+        private Player CreatePlayer(PlayerInitData playerInitData)
+        {
+            // var units = new List<Unit>();
+            // foreach(var unitInitData in playerInitData.units)
+            // {
+            //     units.Add();
+            // }
+
+            // var player = new Player(playerInitData.index, );
         }
 
         public bool IsPlayerTurn(int playerIndex)
@@ -46,7 +71,7 @@ namespace MiniRPG.BattleLogic
                 _logger.LogError($"Invalid Player Index : {playerIndex}. Player Index should be 0 or 1.");
                 return null;
             }
-s
+
             return playerIndex == 0 ? _players[0] : _players[1];
         }
 
@@ -96,6 +121,32 @@ s
                     )
                 )
             );
+        }
+
+        private void AddUnit(int playerIndex, Unit unit)
+        {
+            var player = GetPlayer(playerIndex);
+            if(player == null)
+            {
+                _logger.LogError($"Cannot add unit. No Player found with index : {playerIndex}");
+                return;
+            }
+
+            _entityManager.AddEntity(unit);
+
+            player.AddUnit(unit);
+            unit.Init(this, player);
+        }
+
+        public void DestroyUnit(Unit unit)
+        {
+            _entityManager.RemoveEntity(unit.id);
+            unit.player.RemoveUnit(unit.id);
+        }
+
+        private void ChangeTurn()
+        {
+            _turn++;
         }
     }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MiniRPG.Common;
 
 namespace MiniRPG.BattleLogic
 {
@@ -9,9 +10,19 @@ namespace MiniRPG.BattleLogic
         public int id { get; private set; }
         public List<Component> components { get; private set; }
 
-        public Entity(int id)
+        protected ILogger logger;
+        protected BattleSimulation battleSimulation;
+
+        public Entity(int id, BattleSimulation battleSimulation, ILogger logger)
         {
             this.id = id;
+            this.logger = logger;
+            this.battleSimulation = battleSimulation;
+        }
+
+        public void AddComponent(Component component)
+        {
+            components.Add(component);
         }
 
         public Component GetComponent(Type type)

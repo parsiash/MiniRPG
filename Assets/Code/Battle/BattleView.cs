@@ -9,7 +9,7 @@ namespace MiniRPG.BattleView
     /// </summary>
     public interface IBattleView
     {
-        void Init(IBattleSimulation battleSimulation);
+        void Init(IBattleSimulation battleSimulation, IEntityViewFactory entityViewFactory);
         IEnumerable<IEntityView> EntityViews { get; }
         IEntityView GetEntityView(int entityId);
         void Clear();
@@ -43,11 +43,12 @@ namespace MiniRPG.BattleView
             }
         }
 
-        public void Init(IBattleSimulation battleSimulation)
+        public void Init(IBattleSimulation battleSimulation, IEntityViewFactory entityViewFactory)
         {
             Clear();
 
             _battleSimulation = battleSimulation;
+            _entityViewFactory = entityViewFactory;
 
             //create entity views
             foreach(var entity in battleSimulation.Entities)
@@ -65,7 +66,7 @@ namespace MiniRPG.BattleView
                 return null;
             }
 
-            var entityView = _entityViewFactory.CreateEntityView(entity.name);
+            var entityView = _entityViewFactory.CreateEntityView("UnitView");
             if(entityView != null)
             {
                 entityView.Init(entity);

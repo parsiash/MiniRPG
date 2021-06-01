@@ -28,7 +28,19 @@ namespace MiniRPG.BattleView
             }
         }
 
-        public Vector2 Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Vector2 Position
+        {
+            get
+            {
+                return transform.position;
+            }
+
+            set
+            {
+                var currentPos = transform.position;
+                transform.position = new Vector3(value.x, value.y, currentPos.z);
+            }
+        }
 
         private Unit _unit;
         public Entity Entity => _unit;

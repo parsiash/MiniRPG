@@ -160,7 +160,7 @@ namespace MiniRPG.BattleLogic
             );
         }
 
-        private void AddUnit(int playerIndex, Unit unit)
+        private void RegisterUnit(int playerIndex, Unit unit)
         {
             var player = GetPlayer(playerIndex);
             if(player == null)

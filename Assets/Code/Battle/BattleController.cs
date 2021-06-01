@@ -1,6 +1,7 @@
 using MiniRPG.BattleLogic;
 using MiniRPG.BattleView;
 using MiniRPG.Common;
+using Newtonsoft.Json;
 
 namespace MiniRPG.Battle
 {
@@ -21,10 +22,21 @@ namespace MiniRPG.Battle
     {
         private IBattleSimulation _battleSimulation;
         private IBattleView battleView => RetrieveCachedComponentInChildren<BattleView.BattleView>();
+        private IEntityViewFactory entityViewFactory
+        {
+            get
+            {
+                _entityViewFactory = _entityViewFactory ?? new EntityViewFactory(logger);
+                return _entityViewFactory;
+            }
+        }
+        private IEntityViewFactory _entityViewFactory;
 
         public void Init(BattleControllerInitData initData)
         {
+            logger.Log("Battle Controller init with data : " + JsonConvert.SerializeObject(initData));
             _battleSimulation = new BattleSimulation(initData.battleInitData, logger);
+            battleView.Init(_battleSimulation, entityViewFactory);
         }
 
         public void StartBattle()

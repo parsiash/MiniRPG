@@ -20,6 +20,8 @@ namespace MiniRPG.BattleLogic
             this.name = name;
             this.logger = logger;
             this.battleSimulation = battleSimulation;
+
+            components = new List<Component>();
         }
 
         public void AddComponent(Component component)

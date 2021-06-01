@@ -5,14 +5,14 @@ namespace MiniRPG.BattleLogic
 {
     public interface IEntityFactory
     {
-        Entity CreateEntity(Type entityType, int entityId = -1);
+        Entity CreateEntity(Type entityType, string name, int entityId = -1);
     }
 
     public static class EntityFactoryExtensions
     {
-        public static T CreateEntity<T>(this IEntityFactory entityFactory, int entityId = -1) where T : Entity
+        public static T CreateEntity<T>(this IEntityFactory entityFactory, string name, int entityId = -1) where T : Entity
         {
-            return entityFactory.CreateEntity(typeof(T), entityId) as T;
+            return entityFactory.CreateEntity(typeof(T), name, entityId) as T;
         }
     }
 
@@ -30,7 +30,7 @@ namespace MiniRPG.BattleLogic
             _logger = logger;
         }
 
-        public Entity CreateEntity(Type entityType, int entityId = -1)
+        public Entity CreateEntity(Type entityType, string name, int entityId = -1)
         {
             if(!typeof(Entity).IsAssignableFrom(entityType))
             {
@@ -49,7 +49,7 @@ namespace MiniRPG.BattleLogic
                 _nextEntityId = Math.Max(_nextEntityId, entityId) + 1;
             }
 
-            var entity = Activator.CreateInstance(entityType, entityId, _battleSimulation, _logger) as Entity;
+            var entity = Activator.CreateInstance(entityType, name, entityId, _battleSimulation, _logger) as Entity;
 
             _logger.LogDebug($"Enitty of type  {entityType} and id {entityId} created.");
 

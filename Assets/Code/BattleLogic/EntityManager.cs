@@ -5,6 +5,7 @@ namespace MiniRPG.BattleLogic
 {
     public interface IEntityManager
     {
+        IEnumerable<Entity> Entities { get; }
         void AddEntity(Entity entity);
         void RemoveEntity(int entityId);
         Entity GetEntity(int entityId);
@@ -12,6 +13,7 @@ namespace MiniRPG.BattleLogic
 
     public class EntityManager : IEntityManager
     {
+        public IEnumerable<Entity> Entities => _entities.Values;
         private IDictionary<int, Entity> _entities;
         private ILogger _logger;
 
@@ -20,6 +22,7 @@ namespace MiniRPG.BattleLogic
             _entities = new Dictionary<int, Entity>();
             _logger = logger;
         }
+
 
         public void AddEntity(Entity entity)
         {

@@ -4,14 +4,12 @@ namespace MiniRPG.BattleLogic
 {
     public class Unit : Entity
     {
-
-        public string name { get; private set; }
         public int index { get; private set; }
         public int level { get; private set; }
         public int experience { get; private set; }
         private Player _player;
 
-        public Unit(int id, BattleSimulation battleSimulation, ILogger logger) : base(id, battleSimulation, logger)
+        public Unit(string name, int id, BattleSimulation battleSimulation, ILogger logger) : base(name, id, battleSimulation, logger)
         {
         }
 

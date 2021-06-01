@@ -7,15 +7,17 @@ namespace MiniRPG.BattleLogic
 {
     public class Entity
     {
+        public string name { get; private set; }
         public int id { get; private set; }
         public List<Component> components { get; private set; }
 
         protected ILogger logger;
         protected BattleSimulation battleSimulation;
 
-        public Entity(int id, BattleSimulation battleSimulation, ILogger logger)
+        public Entity(string name, int id, BattleSimulation battleSimulation, ILogger logger)
         {
             this.id = id;
+            this.name = name;
             this.logger = logger;
             this.battleSimulation = battleSimulation;
         }

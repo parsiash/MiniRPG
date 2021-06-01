@@ -4,10 +4,25 @@ using MiniRPG.Common;
 
 namespace MiniRPG.BattleLogic
 {
+    public interface IBattleSimulation
+    {
+        BattleState State { get; }
+        void StartBattle();
+        IEnumerable<Entity> Entities { get; }
+        bool IsFinished { get; }
+    }
+
+    public enum BattleState
+    {
+        Initial,
+        Started,
+        Finished
+    }
+
     /// <summary>
     /// The simulation of battle logic is hanlded in an instance of this class.
     /// </summary>
-    public class BattleSimulation
+    public class BattleSimulation : IBattleSimulation
     {
         private const int DEFAULT_PLAYER_COUNT = 2;
         private Player[] _players;
@@ -15,9 +30,13 @@ namespace MiniRPG.BattleLogic
         private int _turn;
         public int Turn => _turn;
 
+        public IEnumerable<Entity> Entities => _entityManager.Entities;
+
+        private BattleState _state;
+        public BattleState State => _state;
+
         private IEntityFactory _entityFactory;
         private IEntityManager _entityManager;
-
 
         private ILogger _logger;
 
@@ -31,17 +50,9 @@ namespace MiniRPG.BattleLogic
             _players = battleInitData.players.Select(pid => CreatePlayer(pid)).ToArray();
         }
 
-        private Unit CreateUnit(Player player, UnitInitData unitInitData)
+        public void StartBattle()
         {
-            var unit = _entityFactory.CreateEntity<Unit>(unitInitData.entityId);
-
-            var unitStat = unitInitData.unitStat;
-            unit.AddComponent(new HealthComponent(unitStat.health));
-            unit.AddComponent(new AttackComponent(unitStat.attack));
-
-            AddUnit(unit, player);
-
-            return unit;
+            _turn = 0;
         }
 
         private Player CreatePlayer(PlayerInitData playerInitData)
@@ -56,6 +67,24 @@ namespace MiniRPG.BattleLogic
             }
 
             return player;
+        }
+
+        private Unit CreateUnit(Player player, UnitInitData unitInitData)
+        {
+            //create unit entity
+            var unit = _entityFactory.CreateEntity<Unit>(
+                unitInitData.name, 
+                unitInitData.entityId
+            );
+
+            //add components
+            var unitStat = unitInitData.unitStat;
+            unit.AddComponent(new HealthComponent(unitStat.health));
+            unit.AddComponent(new AttackComponent(unitStat.attack));
+
+            RegisterUnit(unit, player);
+
+            return unit;
         }
 
         public bool IsPlayerTurn(int playerIndex)
@@ -114,6 +143,8 @@ namespace MiniRPG.BattleLogic
             int attack = attacker.attackComponent.Attack;
             var actualDamage = target.healthComponent.TakeDamage(attack);
 
+            ChangeTurn();
+
             return new TurnResult(
                 data.turn,
                 new TurnEvent(
@@ -138,10 +169,10 @@ namespace MiniRPG.BattleLogic
                 return;
             }
 
-            AddUnit(unit, player);
+            RegisterUnit(unit, player);
         }
 
-        private void AddUnit(Unit unit, Player player)
+        private void RegisterUnit(Unit unit, Player player)
         {
             _entityManager.AddEntity(unit);
             player.AddUnit(unit);
@@ -157,6 +188,33 @@ namespace MiniRPG.BattleLogic
         private void ChangeTurn()
         {
             _turn++;
+        }
+
+             public bool IsFinished
+        {
+            get
+            {
+                foreach(var player in _players)
+                {
+                    bool hasPlayerLost = true;
+
+                    foreach(var unit in player.units)
+                    {
+                        if(!unit.IsDead)
+                        {
+                            hasPlayerLost = false;
+                            break;
+                        }
+                    }
+
+                    if(hasPlayerLost)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
     }
 }

@@ -23,7 +23,7 @@ namespace MiniRPG.BattleView
         }
     }
 
-    public class BattleView : CommonBehaviour, IBattleView
+    public class BattleView : CommonBehaviour, IBattleView, IEntityViewEventListener
     {
         private IBattleSimulation _battleSimulation;
         private IEntityViewFactory _entityViewFactory;
@@ -69,7 +69,7 @@ namespace MiniRPG.BattleView
             var entityView = _entityViewFactory.CreateEntityView("UnitView");
             if(entityView != null)
             {
-                entityView.Init(entity);
+                entityView.Init(entity, this);
                 entityViews.Add(entity.id, entityView);
 
                 logger.LogDebug($"Entity View with name : {entity.name} and id : {entity.id} created and added to battle view.");
@@ -101,6 +101,15 @@ namespace MiniRPG.BattleView
             }
 
             entityViews.Clear();
+        }
+
+        public void OnClick(IEntityView entityView)
+        {
+            var unitView = entityView as UnitView;
+            if(unitView)
+            {
+                //here process the attack event
+            }
         }
     }
 }

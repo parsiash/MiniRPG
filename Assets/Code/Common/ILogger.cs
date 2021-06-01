@@ -22,7 +22,9 @@ namespace MiniRPG.Common
 
         public static void LogDebug(this ILogger logger, string message)
         {
+#if DEBUG
             logger.Log(LogType.Debug, message);
+#endif
         }
     }
 

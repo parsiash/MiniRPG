@@ -8,6 +8,8 @@ namespace MiniRPG.Common
     /// </summary>
     public class CommonBehaviour : MonoBehaviour
     {
+        protected ILogger logger => DefaultLogger.Instance;
+        
         public void SetActive(bool active)
         {
             gameObject.SetActive(active);

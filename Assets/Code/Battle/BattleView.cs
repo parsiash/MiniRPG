@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using MiniRPG.Battle;
 using MiniRPG.BattleLogic;
 using MiniRPG.Common;
 
@@ -9,7 +10,12 @@ namespace MiniRPG.BattleView
     /// </summary>
     public interface IBattleView
     {
-        void Init(IBattleSimulation battleSimulation, IEntityViewFactory entityViewFactory);
+        void Init(
+            IBattleSimulation battleSimulation, 
+            IEntityViewFactory entityViewFactory, 
+            IBattleActionListener battleActionListener
+        );
+
         IEnumerable<IEntityView> EntityViews { get; }
         IEntityView GetEntityView(int entityId);
         void Clear();
@@ -27,6 +33,7 @@ namespace MiniRPG.BattleView
     {
         private IBattleSimulation _battleSimulation;
         private IEntityViewFactory _entityViewFactory;
+        private IBattleActionListener _battleActionListener;
 
         /// <summary>
         /// Entity Views.
@@ -43,12 +50,13 @@ namespace MiniRPG.BattleView
             }
         }
 
-        public void Init(IBattleSimulation battleSimulation, IEntityViewFactory entityViewFactory)
+        public void Init(IBattleSimulation battleSimulation, IEntityViewFactory entityViewFactory, IBattleActionListener battleActionListener)
         {
             Clear();
 
             _battleSimulation = battleSimulation;
             _entityViewFactory = entityViewFactory;
+            _battleActionListener = battleActionListener;
 
             //create entity views
             foreach(var entity in battleSimulation.Entities)
@@ -108,7 +116,10 @@ namespace MiniRPG.BattleView
             var unitView = entityView as UnitView;
             if(unitView)
             {
-                //here process the attack event
+                _battleActionListener.OnRandomAttack(
+                    unitView.Unit.PlayerIndex,
+                    unitView.Unit.id
+                );
             }
         }
     }

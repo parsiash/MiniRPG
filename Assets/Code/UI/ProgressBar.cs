@@ -13,7 +13,7 @@ namespace MiniRPG.UI
         public float Progress => (_maxValue == 0) ? 0f : _currentValue / _maxValue;
 
         [SerializeField] protected Image fillImage;
-        
+
         [Header("Amount of time to fill a whole bar")]
         [SerializeField] protected float fillingTime = 1f;
         [SerializeField] protected AnimationCurve fillingCurve;
@@ -30,6 +30,10 @@ namespace MiniRPG.UI
             fillImage.fillAmount = Progress;
         }
 
+        public void Subtract(float amount)
+        {
+            FillTo(_currentValue - amount);
+        }
 
         public void FillTo(float targetValue)
         {

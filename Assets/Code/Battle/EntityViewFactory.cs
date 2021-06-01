@@ -28,7 +28,9 @@ namespace MiniRPG.BattleView
 
             var entityObject = GameObject.Instantiate(prefab);
             var entityView = entityObject.GetComponent<IEntityView>();
-            entityView.Position = new Vector2(Random.Range(-2, 2), Random.Range(-2, 2));
+
+            entityView.Position = new Vector2(Random.Range(-4, 4), Random.Range(-4, 4));
+
             return entityView;
         }
 

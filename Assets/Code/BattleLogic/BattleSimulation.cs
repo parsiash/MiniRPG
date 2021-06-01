@@ -8,9 +8,21 @@ namespace MiniRPG.BattleLogic
     {
         BattleState State { get; }
         void StartBattle();
-        IEnumerable<Entity> Entities { get; }
+        int Turn { get; }
+        TurnResult PlayTurn(PlayTurnData data);
         bool IsFinished { get; }
+        IEnumerable<Entity> Entities { get; }
+        Player GetPlayer(int playerIndex);
     }
+
+    public static class BattleSimulationExtensions
+    {
+        public static Player GetOpponentPlayer(this IBattleSimulation battleSimulation, int playerIndex)
+        {
+            return battleSimulation.GetPlayer(1 - playerIndex);
+        }
+    }
+
 
     public enum BattleState
     {
@@ -132,7 +144,7 @@ namespace MiniRPG.BattleLogic
             }
 
             //retrieve the target unit
-            var target = _entityManager.GetEntity(data.action.attackerId) as Unit;
+            var target = _entityManager.GetEntity(data.action.targetId) as Unit;
             if(target == null)
             {
                 _logger.LogError($"No target found with entity id : {data.action.targetId}");

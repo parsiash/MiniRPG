@@ -19,7 +19,7 @@ namespace MiniRPG.BattleLogic
             var previousHealth = health;
             health = Math.Max(0, health - damage);
 
-            return health - previousHealth;
+            return Math.Max(0, previousHealth - health);
         }
     }
 }

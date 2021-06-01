@@ -53,6 +53,8 @@ namespace MiniRPG.BattleView
         public Unit Unit => _unit;
         private IEntityViewEventListener _eventListener;
 
+        private UnitViewInfoUI infoUI => RetrieveCachedComponentInChildren<UnitViewInfoUI>();
+
         public void Init(Entity entity, IEntityViewEventListener eventListener)
         {
             if(entity is Unit)
@@ -61,6 +63,11 @@ namespace MiniRPG.BattleView
                 _health = _unit.healthComponent.health;
                 
                 _eventListener = eventListener;
+
+                infoUI.Init(_unit.healthComponent.health, _unit.healthComponent.maxHealth);
+
+                //@TODO; temporary for test
+                RetrieveCachedComponentInChildren<SpriteRenderer>().color = _unit.PlayerIndex == 0 ? Color.blue : Color.red;
             }else
             {
                 logger.LogError($"Cannot init unit view : {gameObject.name}. The given entity is not a unit entity.");
@@ -76,7 +83,7 @@ namespace MiniRPG.BattleView
 
         public virtual void TakeDamage(int damage)
         {
-            throw new NotImplementedException();
+            infoUI.TakeDamage(damage);
         }
 
         public void OnPointerClick(PointerEventData eventData)

@@ -8,6 +8,11 @@ namespace MiniRPG.BattleLogic
         public string name;
         public System.Object data;
 
+        public T GetData<T>() where T : class
+        {
+            return data as T;
+        }
+
         public TurnEvent(string name, System.Object data = null)
         {
             this.name = name;

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MiniRPG.BattleLogic
 {
@@ -6,6 +7,8 @@ namespace MiniRPG.BattleLogic
     {
         public int index { get; private set; }
         public List<Unit> units { get; private set; }
+
+        public Unit[] AliveUnits => units.Where(u => !u.IsDead).ToArray();
 
         public Player(int index)
         {

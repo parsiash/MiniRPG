@@ -20,18 +20,16 @@ namespace MiniRPG.BattleView
 
         public IEntityView CreateEntityView(string name)
         {
+            //retrive the prefab
             var prefab = Resources.Load<GameObject>("Entities/" + name);
             if(!prefab)
             {
                 _logger.LogError($"Cannot create entity view with name : {name}. No Entity View Found.");
             }
 
+            //instantiate the entity view
             var entityObject = GameObject.Instantiate(prefab);
-            var entityView = entityObject.GetComponent<IEntityView>();
-
-            entityView.Position = new Vector2(Random.Range(-4, 4), Random.Range(-4, 4));
-
-            return entityView;
+            return entityObject.GetComponent<IEntityView>();
         }
 
         public void DestroyEntityView(IEntityView entityView)

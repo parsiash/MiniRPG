@@ -13,6 +13,7 @@ namespace MiniRPG.BattleView
 
     public interface IUnitView : IEntityView
     {
+        Unit Unit { get; }
         int Health { get; set; }
         void TakeDamage(int damage);
         void Attack(IUnitView target, System.Action OnHit);

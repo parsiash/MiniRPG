@@ -50,8 +50,8 @@ namespace MiniRPG
                     Random.Range(1, 20),
                     Random.Range(1, 20),
                     new UnitStat(
-                        Random.Range(2, 8),
-                        Random.Range(1, 10)
+                        Random.Range(2, 5),
+                        Random.Range(15, 20)
                     )
                 );
             }

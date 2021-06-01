@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using MiniRPG.Battle;
 using MiniRPG.BattleLogic;
 using MiniRPG.Common;
+using UnityEngine;
 
 namespace MiniRPG.BattleView
 {
@@ -65,6 +66,8 @@ namespace MiniRPG.BattleView
             }
         }
 
+        [SerializeField] private Transform[] unitPositions;
+
         private IEntityView CreateEntityView(Entity entity)
         {
             //check for entity id conflict
@@ -74,6 +77,7 @@ namespace MiniRPG.BattleView
                 return null;
             }
 
+            //create and intialize the entity view
             var entityView = _entityViewFactory.CreateEntityView("UnitView");
             if(entityView != null)
             {
@@ -81,6 +85,24 @@ namespace MiniRPG.BattleView
                 entityViews.Add(entity.id, entityView);
 
                 logger.LogDebug($"Entity View with name : {entity.name} and id : {entity.id} created and added to battle view.");
+            }
+
+            //intialize unit view
+            if(entityView is IUnitView)
+            {
+                var unitView = entityView as IUnitView;
+                var player = unitView.Unit.player;
+                var unitIndexInTeam = player.GetUnitIndexById(unitView.Unit.id);
+                if(unitIndexInTeam >= 0 && unitIndexInTeam <= unitPositions.Length)
+                {
+                    var position = unitPositions[unitIndexInTeam].position;
+                    if(player.index == 1)
+                    {
+                        position.x -= position.x;
+                    }
+                    
+                    unitView.Position = position;
+                }
             }
 
             return entityView;

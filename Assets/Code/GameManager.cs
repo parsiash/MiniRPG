@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using MiniRPG.BattleLogic;
 using MiniRPG.Common;
+using MiniRPG.Metagame;
+using MiniRPG.Navigation;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -25,29 +28,45 @@ namespace MiniRPG
         }
 #endif
 
+        public Game game { get; private set; }
+        public INavigator rootNavigator { get; private set; }
+
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             logger.Log($"Scene {scene.name} Loaded");
 
-            var battleController = Object.FindObjectOfType<Battle.BattleController>(true);
-            if(!battleController)
+            rootNavigator = new Navigator(logger);
+            var battlePage = Object.FindObjectOfType<Battle.BattlePage>(true);
+            if(!battlePage)
             {
-                logger.LogError("No Battle Controller Found.");
+                logger.LogError("Cannot start the game. No Battle Page Found.");
                 return;
             }
 
-            battleController.Init(new Battle.BattleControllerInitData(
-                new BattleLogic.BattleInitData(
-                    new BattleLogic.PlayerInitData(
-                        0,
-                        GenerateRandomUnits(3)
+            game = new Game(
+                new MetagameSimulation(
+                    new User(
+                        new UserProfile(
+                            "GuestUser",
+                            Enumerable.Range(1, 8).Select(i => GenerateHero(i)).ToArray()
+                        )
                     ),
-                    new BattleLogic.PlayerInitData(
-                        1,
-                        GenerateRandomUnits(1)
-                    )
-                )
-            ));
+                    logger
+                ),
+                logger
+            );
+        }
+
+        private ProfileHero GenerateHero(int heroId)
+        {
+            return new ProfileHero(
+                heroId,
+                "Hero_" + heroId,
+                Random.Range(1, 20),
+                Random.Range(1, 20),
+                Random.Range(1, 5),
+                Random.Range(20, 30)
+            );
         }
 
         private UnitInitData[] GenerateRandomUnits(int count)

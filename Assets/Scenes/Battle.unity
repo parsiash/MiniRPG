@@ -339,6 +339,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 142887106, guid: 4654849e17c20fb49a697f07ff488523, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3
+      objectReference: {fileID: 0}
+    - target: {fileID: 309765890, guid: 4654849e17c20fb49a697f07ff488523, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2138202114, guid: 4654849e17c20fb49a697f07ff488523, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3
+      objectReference: {fileID: 0}
     - target: {fileID: 6413462066826688693, guid: 4654849e17c20fb49a697f07ff488523, type: 3}
       propertyPath: m_Name
       value: BattleController

@@ -56,6 +56,20 @@ namespace MiniRPG.BattleView
 
         private UnitViewInfoUI infoUI => RetrieveCachedComponentInChildren<UnitViewInfoUI>();
 
+        private IUnitViewAnimationController _animationController;
+        private IUnitViewAnimationController animationController
+        {
+            get
+            {
+                if(_animationController == null)
+                {
+                    _animationController = GetComponentInChildren<IUnitViewAnimationController>();
+                }
+
+                return _animationController;
+            }
+        }
+
         public void Init(Entity entity, IEntityViewEventListener eventListener)
         {
             if(entity is Unit)
@@ -66,6 +80,8 @@ namespace MiniRPG.BattleView
                 _eventListener = eventListener;
 
                 infoUI.Init(_unit.healthComponent.health, _unit.healthComponent.maxHealth);
+                animationController.Init(this);
+
 
                 //@TODO; temporary for test
                 RetrieveCachedComponentInChildren<SpriteRenderer>().color = _unit.PlayerIndex == 0 ? Color.blue : Color.red;
@@ -75,10 +91,9 @@ namespace MiniRPG.BattleView
             }
         }
 
-
         public virtual void Attack(IUnitView target, Action OnHit)
         {
-            throw new NotImplementedException();
+            animationController.PlayAttack(target.Position, OnHit);   
         }
 
 

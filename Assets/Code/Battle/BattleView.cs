@@ -51,6 +51,8 @@ namespace MiniRPG.BattleView
             }
         }
 
+        [SerializeField] private Transform[] unitPositions;
+
         public void Init(IBattleSimulation battleSimulation, IEntityViewFactory entityViewFactory, IBattleActionListener battleActionListener)
         {
             Clear();
@@ -65,8 +67,6 @@ namespace MiniRPG.BattleView
                 var entityView = CreateEntityView(entity);
             }
         }
-
-        [SerializeField] private Transform[] unitPositions;
 
         private IEntityView CreateEntityView(Entity entity)
         {
@@ -93,12 +93,12 @@ namespace MiniRPG.BattleView
                 var unitView = entityView as IUnitView;
                 var player = unitView.Unit.player;
                 var unitIndexInTeam = player.GetUnitIndexById(unitView.Unit.id);
-                if(unitIndexInTeam >= 0 && unitIndexInTeam <= unitPositions.Length)
+                if(unitIndexInTeam >= 0 && unitIndexInTeam < unitPositions.Length)
                 {
                     var position = unitPositions[unitIndexInTeam].position;
                     if(player.index == 1)
                     {
-                        position.x -= position.x;
+                        position.x = -position.x;
                     }
                     
                     unitView.Position = position;

@@ -73,13 +73,17 @@ namespace MiniRPG.Battle
                     {
                         case TurnEvent.ATTACK:
                             var attackResult = turnEvent.GetData<AttackResult>();
+                            var attackerUnitView = battleView.GetEntityView(attackResult.attackerId) as UnitView;
                             var targetUnitView = battleView.GetEntityView(attackResult.targetId) as UnitView;
                             if(!targetUnitView)
                             {
                                 logger.LogError($"Showing attack result failed. Target Unit View Not Found : {attackResult.targetId}");
                             }else
                             {
-                                targetUnitView.TakeDamage(attackResult.actualDamage);
+                                attackerUnitView.Attack(
+                                    targetUnitView,
+                                    () => targetUnitView.TakeDamage(attackResult.actualDamage)
+                                );
                             }
                             break;
 

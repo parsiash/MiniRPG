@@ -15,6 +15,16 @@ namespace MiniRPG
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
+#if DEBUG
+        protected void Update()
+        {
+            if(Input.GetKeyDown(KeyCode.R))
+            {
+                SceneManager.LoadScene(0);
+            }
+        }
+#endif
+
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             logger.Log($"Scene {scene.name} Loaded");

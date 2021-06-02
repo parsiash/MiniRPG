@@ -5,12 +5,12 @@ namespace MiniRPG
 {
     public class Game
     {
-        public IMetagameSimulation _metagameSimulation;
+        public IMetagameSimulation  metagameSimulation { get; private set; }
         public Common.ILogger _logger;
 
         public Game(IMetagameSimulation metagameSimulation, ILogger logger)
         {
-            _metagameSimulation = metagameSimulation;
+            this.metagameSimulation = metagameSimulation;
             _logger = logger;
         }
     }

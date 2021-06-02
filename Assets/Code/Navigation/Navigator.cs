@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniRPG.Common;
@@ -32,6 +33,7 @@ namespace MiniRPG.Navigation
             }
 
             _pages[page.Name] = page;
+            page.SetVisible(false);
         }
 
         public INavigationPage GetPage(string name)
@@ -44,6 +46,16 @@ namespace MiniRPG.Navigation
             return null;
         }
 
+        public static string GetPageNameByType<T>() where T : INavigationPage
+        {
+            return GetPageNameByType(typeof(T));
+        }
+
+        public static string GetPageNameByType(Type pageType)
+        {
+            return pageType.Name;
+        }
+
         public async Task<bool> ShowPage(string name, INavigationData loadData = null)
         {
             var page = GetPage(name);
@@ -53,16 +65,15 @@ namespace MiniRPG.Navigation
                 return false;
             }
 
-            _currentPage = page;
-
-            page.SetVisible(true);
-
             try
             {
                 var success = await page.OnLoaded(this, loadData);
                 if(success)
                 {
-                    HideCurrentPage();
+                    _currentPage?.SetVisible(false);
+
+                    _currentPage = page;
+                    page.SetVisible(true);
                 }
 
                 return success;
@@ -71,15 +82,6 @@ namespace MiniRPG.Navigation
             {
                 _logger.LogError($"Exception occured while loading page {name} : {exp.Message} \n {exp.StackTrace}");
                 return false;
-            }
-        }
-
-        private void HideCurrentPage()
-        {
-            if (_currentPage != null)
-            {
-                _currentPage.SetVisible(false);
-                _currentPage = null;
             }
         }
     }

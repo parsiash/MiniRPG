@@ -8,9 +8,9 @@ namespace MiniRPG.Menu
     {
         public class LoadData : INavigationData
         {
-            public MetagameSimulation metagameSimulation { get; set; }
+            public IMetagameSimulation metagameSimulation { get; set; }
 
-            public LoadData(MetagameSimulation metagameSimulation)
+            public LoadData(IMetagameSimulation metagameSimulation)
             {
                 this.metagameSimulation = metagameSimulation;
             }

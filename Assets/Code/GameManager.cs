@@ -31,18 +31,28 @@ namespace MiniRPG
         public Game game { get; private set; }
         public INavigator rootNavigator { get; private set; }
 
+        private T FindPage<T>() where T : NavigationPageBase
+        {
+            var page = Object.FindObjectOfType<T>(true);
+            if(!page)
+            {
+                logger.LogError($"Cannot start the game. No Page of type {typeof(T).Name} Found.");
+                return null;
+            }
+
+            return page;
+        }
+
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             logger.Log($"Scene {scene.name} Loaded");
 
+            //initialize root navigator
             rootNavigator = new Navigator(logger);
-            var battlePage = Object.FindObjectOfType<Battle.BattlePage>(true);
-            if(!battlePage)
-            {
-                logger.LogError("Cannot start the game. No Battle Page Found.");
-                return;
-            }
+            rootNavigator.AddPage(FindPage<Menu.HeroSelectionMenu>());
+            rootNavigator.AddPage(FindPage<Battle.BattlePage>());
 
+            //create the game object
             game = new Game(
                 new MetagameSimulation(
                     new User(
@@ -55,6 +65,9 @@ namespace MiniRPG
                 ),
                 logger
             );
+
+            //show hero selection menu
+            rootNavigator.ShowPage(Navigator.GetPageNameByType<Menu.HeroSelectionMenu>(), new Menu.HeroSelectionMenu.LoadData(game.metagameSimulation));
         }
 
         private ProfileHero GenerateHero(int heroId)

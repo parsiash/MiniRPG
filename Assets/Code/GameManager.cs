@@ -31,18 +31,6 @@ namespace MiniRPG
         public Game game { get; private set; }
         public INavigator rootNavigator { get; private set; }
 
-        private T FindPage<T>() where T : NavigationPageBase
-        {
-            var page = Object.FindObjectOfType<T>(true);
-            if(!page)
-            {
-                logger.LogError($"Cannot start the game. No Page of type {typeof(T).Name} Found.");
-                return null;
-            }
-
-            return page;
-        }
-
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             logger.Log($"Scene {scene.name} Loaded");
@@ -68,6 +56,18 @@ namespace MiniRPG
 
             //show hero selection menu
             rootNavigator.ShowPage(Navigator.GetPageNameByType<Menu.HeroSelectionMenu>(), new Menu.HeroSelectionMenu.LoadData(game.metagameSimulation));
+        }
+
+         private T FindPage<T>() where T : NavigationPageBase
+        {
+            var page = Object.FindObjectOfType<T>(true);
+            if(!page)
+            {
+                logger.LogError($"Cannot start the game. No Page of type {typeof(T).Name} Found.");
+                return null;
+            }
+
+            return page;
         }
 
         private ProfileHero GenerateHero(int heroId)

@@ -100,7 +100,7 @@ namespace MiniRPG.Menu
             }
 
             await parentNavigator.ShowPage<Battle.BattlePage>(
-                new Battle.BattlePage.OnLoadData(
+                new Battle.BattlePage.LoadData(
                     new BattleLogic.BattleInitData(
                         new PlayerInitData(
                             0,
@@ -110,11 +110,20 @@ namespace MiniRPG.Menu
                         ),
                         new PlayerInitData(
                                 1,
-                                new UnitInitData[] { ConvertToUnitInitData(GameManager.Instance.GenerateHero(100)) }
+                                new UnitInitData[] { ConvertToUnitInitData(GameManager.Instance.GenerateHero(-1)) }
                         )
-                    )
+                    ),
+                    OnBattleResult
                 )
             );
+        }
+
+        private async void OnBattleResult(BattleResult battleResult)
+        {
+            metagameSimulation.OnBattleResult(battleResult);
+
+            //@TODO; this is a hack, everything should go in a battle loader component
+            await GameManager.Instance.rootNavigator.ShowPage<Menu.HeroSelectionMenu>(new Menu.MenuPageBase.LoadData(metagameSimulation));
         }
 
         private static UnitInitData ConvertToUnitInitData(ProfileHero hero)
@@ -126,7 +135,8 @@ namespace MiniRPG.Menu
                 new UnitStat(
                     hero.attack,
                     hero.health
-                )
+                ),
+                hero.heroId
             );
         }
     }

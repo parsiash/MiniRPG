@@ -1,23 +1,26 @@
+using System;
 using System.Threading.Tasks;
 using MiniRPG.BattleLogic;
 using MiniRPG.Common;
 using MiniRPG.Navigation;
-using TMPro;
 
 namespace MiniRPG.Battle
 {
     public class BattlePage : NavigationPageBase
     {
-        public class OnLoadData : INavigationData
+        public class LoadData : INavigationData
         {
             public BattleInitData battleInitData { get; set ;}
+            public Action<BattleResult> onBattleResultCallback { get; set; }
 
-            public OnLoadData(BattleInitData battleInitData)
+            public LoadData(BattleInitData battleInitData, Action<BattleResult> onBattleResultCallback)
             {
                 this.battleInitData = battleInitData;
+                this.onBattleResultCallback = onBattleResultCallback;
             }
         }
 
+        private Action<BattleResult> _onBattleResultCallback;
         public BattleController battleController => RetrieveCachedComponentInChildren<BattleController>();
         public BattleResultPage battleResultPage => RetrieveCachedComponentInChildren<BattleResultPage>();
 
@@ -25,7 +28,7 @@ namespace MiniRPG.Battle
         {
             await base.OnLoaded(parentNavigator, data);
 
-            var loadData = data as OnLoadData;
+            var loadData = data as LoadData;
             if(loadData == null)
             {
                 throw new NavigationException($"Loading battle page failed. No load data is provided to {nameof(OnLoaded)} method.");
@@ -38,6 +41,8 @@ namespace MiniRPG.Battle
                 loadData.battleInitData,
                 OnBattleFinish
             ));
+
+            _onBattleResultCallback = loadData.onBattleResultCallback;
 
             return true;
         }
@@ -61,13 +66,13 @@ namespace MiniRPG.Battle
 
             battleResultPage.ShowBattleResult(
                 battleResult.winnerPlayerIndex == 0 ? BattleResultPage.BattleResultStatus.Win : BattleResultPage.BattleResultStatus.Lose,
-                OnBattlseResultPageFinish
+                () => OnBattlseResultPageFinish(battleResult)
             );
         }
 
-        private async void OnBattlseResultPageFinish()
+        private void OnBattlseResultPageFinish(BattleResult battleResult)
         {
-            await parentNavigator.ShowPage<Menu.HeroSelectionMenu>(new Menu.MenuPageBase.LoadData(GameManager.Instance.game.metagameSimulation));
+            _onBattleResultCallback(battleResult);
         }
     }
 }

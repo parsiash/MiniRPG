@@ -95,7 +95,7 @@ namespace MiniRPG.BattleLogic
             unit.AddComponent(new HealthComponent(unitStat.health));
             unit.AddComponent(new AttackComponent(unitStat.attack));
 
-            RegisterUnit(unit, player);
+            RegisterUnit(unit, player, unitInitData.heroId);
 
             return unit;
         }
@@ -173,7 +173,7 @@ namespace MiniRPG.BattleLogic
             );
         }
 
-        private void RegisterUnit(int playerIndex, Unit unit)
+        private void RegisterUnit(int playerIndex, Unit unit, int heroId)
         {
             var player = GetPlayer(playerIndex);
             if(player == null)
@@ -182,14 +182,14 @@ namespace MiniRPG.BattleLogic
                 return;
             }
 
-            RegisterUnit(unit, player);
+            RegisterUnit(unit, player, heroId);
         }
 
-        private void RegisterUnit(Unit unit, Player player)
+        private void RegisterUnit(Unit unit, Player player, int heroId)
         {
             _entityManager.AddEntity(unit);
             player.AddUnit(unit);
-            unit.Init(player);
+            unit.Init(player, heroId);
         }
 
         public void DestroyUnit(Unit unit)
@@ -212,7 +212,10 @@ namespace MiniRPG.BattleLogic
             }
 
             var winnerPlayerIndex = this.GetOpponentPlayer(loserPlayer.index).index;
-            return new BattleResult(winnerPlayerIndex);
+            return new BattleResult(
+                winnerPlayerIndex,
+                _players.Select(p => p.GetResult()).ToArray()
+            );
         }
 
         private Player GetLoserPlayer()

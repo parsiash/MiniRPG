@@ -32,18 +32,21 @@ namespace MiniRPG.BattleLogic
         public int experience { get; set; }
         public UnitStat unitStat { get; set; }
 
+        public int heroId { get; set; }
+
         /// <summary>
         /// This is an optional field for when we want to explicitly determine the entity id.
         /// E.g. For replaying the battle.
         /// </summary>
         public int entityId { get; set; }
 
-        public UnitInitData(string name, int level, int experience, UnitStat unitStat, int entityId = -1)
+        public UnitInitData(string name, int level, int experience, UnitStat unitStat, int heroId = -1, int entityId = -1)
         {
             this.name = name;
             this.level = level;
             this.experience = experience;
             this.unitStat = unitStat;
+            this.heroId = heroId;
             this.entityId = entityId;
         }
     }

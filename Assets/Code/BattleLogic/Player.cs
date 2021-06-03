@@ -30,5 +30,13 @@ namespace MiniRPG.BattleLogic
         {
             units.RemoveAll(u => u.id == id);
         }
+
+        public PlayerBattleResult GetResult()
+        {
+            return new PlayerBattleResult(
+                index,
+                units.Select(u => u.GetResult()).ToArray()
+            );
+        }
     }
 }

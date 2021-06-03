@@ -82,24 +82,5 @@ namespace MiniRPG
                 Random.Range(20, 30)
             );
         }
-
-        private UnitInitData[] GenerateRandomUnits(int count)
-        {
-            var result = new UnitInitData[count];
-            for(int i = 0; i < count; i++)
-            {
-                result[i] = new UnitInitData(
-                    "RandomName" + Random.Range(10, 100),
-                    Random.Range(1, 20),
-                    Random.Range(1, 20),
-                    new UnitStat(
-                        Random.Range(2, 5),
-                        Random.Range(15, 20)
-                    )
-                );
-            }
-
-            return result;
-        }
     }
 }

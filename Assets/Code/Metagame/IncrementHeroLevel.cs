@@ -3,12 +3,15 @@ namespace MiniRPG.Metagame
     public class IncrementHeroLevel : IProfileUpdate
     {
         public int heroId { get; private set; }
-        public int amount { get; private set; }
-
-        public IncrementHeroLevel(int heroId, int amount)
+        public int levelIncrease { get; private set; }
+        public int attackIncrease { get; private set; }
+        public int healthIncrease { get; private set; }
+        public IncrementHeroLevel(int heroId, int levelIncrease, int attackIncrease, int healthIncrease)
         {
             this.heroId = heroId;
-            this.amount = amount;
+            this.levelIncrease = levelIncrease;
+            this.attackIncrease = attackIncrease;
+            this.healthIncrease = healthIncrease;
         }
 
         public bool Apply(UserProfile profile)
@@ -19,12 +22,9 @@ namespace MiniRPG.Metagame
                 return false;
             }
 
-            for(int i = 0; i < amount; i++)
-            {
-                hero.level++;
-                hero.attack = hero.attack + hero.attack / 10;
-                hero.health = hero.health + hero.attack / 10;
-            }
+            hero.level += levelIncrease;
+            hero.attack += attackIncrease;
+            hero.health += healthIncrease;
 
             return true;
         }

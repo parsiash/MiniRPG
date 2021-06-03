@@ -2,23 +2,84 @@ using MiniRPG.BattleLogic;
 using MiniRPG.Common;
 using MiniRPG.Metagame;
 using MiniRPG.Navigation;
+using MiniRPG.UI;
 using System.Linq;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace MiniRPG.Menu
 {
     public class HeroSelectionMenu : MenuPageBase
     {
-   
+        public class LoadData : MenuLoadData
+        {
+            public IHeroAnouncementHandler heroAnouncementHandler { get; set; }
+            public IOnScreenMessageFactory onScreenMessageFactory { get; set; }
+
+            public LoadData(
+                IMetagameSimulation metagameSimulation, 
+                IHeroAnouncementHandler heroAnouncementHandler,
+                IOnScreenMessageFactory onScreenMessageFactory) : base(metagameSimulation)
+            {
+                this.heroAnouncementHandler = heroAnouncementHandler;
+                this.onScreenMessageFactory = onScreenMessageFactory;
+            }
+        }
+
         private HeroListPanel heroListPanel => RetrieveCachedComponentInChildren<HeroListPanel>();
+        private IHeroAnouncementHandler _heroAnouncementHandler;
+        private IOnScreenMessageFactory _onScreenMessageFactory;
 
         public override async Task<bool> OnLoaded(INavigator parentNavigator, INavigationData data)
         {
             await base.OnLoaded(parentNavigator, data);
 
+            var loadData = data as LoadData;
+            if (loadData == null)
+            {
+                throw new NavigationException($"Loading Hero Selection Page failed. No load data is provided to {nameof(OnLoaded)} method.");
+            }
+
+            InitializeHeroListPanel();
+
+            //show hero anouncements
+            _onScreenMessageFactory = loadData.onScreenMessageFactory;
+            _heroAnouncementHandler = loadData.heroAnouncementHandler;
+
+            return true;
+        }
+
+        protected void Update()
+        {
+            CheckAndShowHeroAnouncements();
+        }
+
+        private void CheckAndShowHeroAnouncements()
+        {
+            var heroAnouncements = _heroAnouncementHandler.FlushAnouncements();
+            foreach (var heroAnouncement in heroAnouncements)
+            {
+                var heroButton = heroListPanel.GetHeroButton(heroAnouncement.heroId);
+                if (heroButton)
+                {
+                    _onScreenMessageFactory.ShowMessage(new OnScreenMessage.Configuration(
+                        heroAnouncement.text,
+                        Color.green,
+                        heroButton.GetWorldPosition(),
+                        2f,
+                        0.5f,
+                        0.1f
+                    ));
+                }
+
+                logger.LogDebug("Hero Anouncement" + heroAnouncement.heroId + " " + heroAnouncement.text);
+            }
+        }
+
+        private void InitializeHeroListPanel()
+        {
             //initialize UI based on playe profile
             var profile = metagameSimulation.User.Profile;
-
             heroListPanel.InitHeroes(
                 profile.heroes.Select(
                     (hero) => new HeroButtonConfiguration(
@@ -27,8 +88,6 @@ namespace MiniRPG.Menu
                         OnHeroButtonClick
                     )
             ));
-
-            return true;
         }
 
         public void OnHeroButtonClick(HeroButton heroButton)
@@ -87,7 +146,9 @@ namespace MiniRPG.Menu
             metagameSimulation.OnBattleResult(battleResult);
 
             //@TODO; this is a hack, everything should go in a battle loader component
-            await GameManager.Instance.rootNavigator.ShowPage<Menu.HeroSelectionMenu>(new Menu.MenuPageBase.LoadData(metagameSimulation));
+            await GameManager.Instance.rootNavigator.ShowPage<Menu.HeroSelectionMenu>(
+                new LoadData(metagameSimulation, _heroAnouncementHandler, _onScreenMessageFactory)
+            );
         }
 
         private static UnitInitData ConvertToUnitInitData(ProfileHero hero)

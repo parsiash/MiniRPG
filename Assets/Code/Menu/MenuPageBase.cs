@@ -6,11 +6,11 @@ namespace MiniRPG.Menu
 {
     public class MenuPageBase : NavigationPageBase
     {
-        public class LoadData : INavigationData
+        public class MenuLoadData : INavigationData
         {
             public IMetagameSimulation metagameSimulation { get; set; }
 
-            public LoadData(IMetagameSimulation metagameSimulation)
+            public MenuLoadData(IMetagameSimulation metagameSimulation)
             {
                 this.metagameSimulation = metagameSimulation;
             }
@@ -23,10 +23,10 @@ namespace MiniRPG.Menu
             await base.OnLoaded(parentNavigator, data);
             
             //validate load data
-            var loadData = data as LoadData;
+            var loadData = data as MenuLoadData;
             if(loadData == null)
             {
-                throw new NavigationException($"Loading Hero Selection Page failed. No load data is provided to {nameof(OnLoaded)} method.");
+                throw new NavigationException($"Loading menu page : {GetType().Name} failed. No load data is provided to {nameof(OnLoaded)} method.");
             }
 
             metagameSimulation = loadData.metagameSimulation;

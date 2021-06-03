@@ -69,12 +69,26 @@ namespace MiniRPG.Metagame
                         int heroTargetLevel = hero.experience / HERO_XP_TO_LEVEL + 1;
                         if (heroTargetLevel > hero.level)
                         {
-                            _profileController.Update(new IncrementHeroLevel(hero.heroId, heroTargetLevel - hero.level));
+                            int levelIncrease = heroTargetLevel - hero.level;
+                            _profileController.Update(
+                                new IncrementHeroLevel(
+                                    hero.heroId,
+                                    levelIncrease,
+                                    GetAttributeIncrease(hero.attack, levelIncrease),
+                                    GetAttributeIncrease(hero.health, levelIncrease)
+                                )
+                            );
                             _logger.Log($"Hero with name {hero.name} and id  {hero.heroId} got leveled up. \n new level : {hero.level}. new attack : {hero.attack}. new health: {hero.health}");
                         }
                     }
                 }
             }
+        }
+
+        public int GetAttributeIncrease(int attribute, int levelIncrease)
+        {
+            var factor = Math.Pow(1.1f, levelIncrease);
+            return (int)(factor * attribute) - attribute;
         }
     }
 } 

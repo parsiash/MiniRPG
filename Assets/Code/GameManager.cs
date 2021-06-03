@@ -32,6 +32,8 @@ namespace MiniRPG
         public Game game { get; private set; }
         public INavigator rootNavigator { get; private set; }
 
+        [SerializeField] private OnScreenMessage onScreenMessagePrefab;
+
         private async void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             logger.Log($"Scene {scene.name} Loaded");
@@ -56,19 +58,36 @@ namespace MiniRPG
                 playerDataRepository.SaveUserProfile(profile);
             }
 
+            var profileController = new ProfileController(profile, playerDataRepository, logger);
+            
+            var heroAnouncementHandler = new HeroAnouncementHandler(logger);
+            profileController.AddListener(heroAnouncementHandler);
+
+            var onScreenMessageFactory = new OnScreenMessageFactory(onScreenMessagePrefab);
+
+
             game = new Game(
                 new MetagameSimulation(
                     new User(
                         profile
                     ),
-                    new ProfileController(profile, playerDataRepository, logger),
+                    profileController,
                     logger
                 ),
+                heroAnouncementHandler,
+                onScreenMessageFactory,
                 logger
             );
+            
 
             //show hero selection menu
-            await rootNavigator.ShowPage<Menu.HeroSelectionMenu>(new Menu.MenuPageBase.LoadData(game.metagameSimulation));
+            await rootNavigator.ShowPage<Menu.HeroSelectionMenu>(
+                new Menu.HeroSelectionMenu.LoadData(
+                    game.metagameSimulation,
+                    game.heroAnouncementHandler,
+                    game.onScreenMessageFactory
+                )
+            );
         }
 
          private T FindPage<T>() where T : NavigationPageBase

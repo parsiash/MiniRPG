@@ -46,7 +46,8 @@ namespace MiniRPG
                     new User(
                         new UserProfile(
                             "GuestUser",
-                            Enumerable.Range(1, 8).Select(i => GenerateHero(i)).ToArray()
+                            Enumerable.Range(1, 8).Select(i => GenerateHero(i)).ToArray(),
+                            new ProfileDeck()
                         )
                     ),
                     logger
@@ -55,7 +56,7 @@ namespace MiniRPG
             );
 
             //show hero selection menu
-            await rootNavigator.ShowPage(Navigator.GetPageNameByType<Menu.HeroSelectionMenu>(), new Menu.HeroSelectionMenu.LoadData(game.metagameSimulation));
+            await rootNavigator.ShowPage<Menu.HeroSelectionMenu>(new Menu.HeroSelectionMenu.LoadData(game.metagameSimulation));
         }
 
          private T FindPage<T>() where T : NavigationPageBase
@@ -70,7 +71,7 @@ namespace MiniRPG
             return page;
         }
 
-        private ProfileHero GenerateHero(int heroId)
+        public ProfileHero GenerateHero(int heroId)
         {
             return new ProfileHero(
                 heroId,

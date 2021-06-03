@@ -12,6 +12,14 @@ namespace MiniRPG.Navigation
         Task<bool> ShowPage(string name, INavigationData loadData = null);
     }
 
+    public static class INavigatorExtensions
+    {
+        public static async Task<bool> ShowPage<T>(this INavigator navigator, INavigationData loadData = null) where T : INavigationPage
+        {
+            return await navigator.ShowPage(Navigator.GetPageNameByType<T>(), loadData);
+        }
+    }
+
     public class Navigator : INavigator
     {
         private Dictionary<string, INavigationPage> _pages;

@@ -1,3 +1,4 @@
+using MiniRPG.BattleLogic;
 using MiniRPG.Common;
 using MiniRPG.Metagame;
 using MiniRPG.Navigation;
@@ -52,10 +53,12 @@ namespace MiniRPG.Menu
             await base.OnLoaded(parentNavigator, data);
 
             //initialize UI based on playe profile
+            var profile = metagameSimulation.User.Profile;
+
             heroListPanel.InitHeroes(
-                metagameSimulation.User.Profile.heroes.Select(
+                profile.heroes.Select(
                     (hero) => new HeroButtonConfiguration(
-                        false,
+                        profile.deck.ContainsHero(hero.heroId),
                         hero,
                         OnHeroButtonClick
                     )
@@ -66,7 +69,65 @@ namespace MiniRPG.Menu
 
         public void OnHeroButtonClick(HeroButton heroButton)
         {
-            heroButton.Selected = !heroButton.Selected;
+            var profile = metagameSimulation.User.Profile;
+            var heroId = heroButton.Hero.heroId;
+
+            if (profile.deck.ContainsHero(heroId))
+            {
+                profile.deck.RemoveHero(heroId);
+                heroButton.Selected = false;
+            }else
+            {
+                if(!profile.deck.HasCapacity)
+                {
+                    logger.LogError("Cannot add hero to deck: Deck is full.");
+                }else
+                {
+                    profile.deck.AddHero(heroId);
+                    heroButton.Selected = true;
+                }
+            }
+        }
+
+        public async void OnStartBattleButtonClick()
+        {
+            var profile = metagameSimulation.User.Profile;
+            var deck = profile.deck;
+            if (deck.IsEmpty)
+            {
+                logger.LogError("Cannot Start the battle. Deck is empty");
+                return;
+            }
+
+            await parentNavigator.ShowPage<Battle.BattlePage>(
+                new Battle.BattlePage.OnLoadData(
+                    new BattleLogic.BattleInitData(
+                        new PlayerInitData(
+                            0,
+                            deck.heroIds.Select(hid => profile.GetHero(hid)).Select(
+                                hero => ConvertToUnitInitData(hero)
+                            ).ToArray()
+                        ),
+                        new PlayerInitData(
+                                1,
+                                new UnitInitData[] { ConvertToUnitInitData(GameManager.Instance.GenerateHero(100)) }
+                        )
+                    )
+                )
+            );
+        }
+
+        private static UnitInitData ConvertToUnitInitData(ProfileHero hero)
+        {
+            return new UnitInitData(
+                                                    hero.name,
+                                                    hero.level,
+                                                    hero.experience,
+                                                    new UnitStat(
+                                                        hero.attack,
+                                                        hero.health
+                                                    )
+                                                );
         }
     }
 }

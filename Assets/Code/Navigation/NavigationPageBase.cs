@@ -7,7 +7,13 @@ namespace MiniRPG.Navigation
     {
         public virtual string Name => Navigator.GetPageNameByType(GetType());
         public INavigator parentNavigator { get; protected set; }
-        
+
+        public virtual async Task<bool> OnHide()
+        {
+            this.parentNavigator = null;
+            return true;
+        }
+
         public virtual async Task<bool> OnLoaded(INavigator parentNavigator, INavigationData data)
         {
             this.parentNavigator = parentNavigator;

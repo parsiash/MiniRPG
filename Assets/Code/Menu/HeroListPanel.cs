@@ -29,6 +29,8 @@ namespace MiniRPG.Menu
                 var heroButton = GameObject.Instantiate<HeroButton>(heroButtonPrefab, buttonsLayoutRoot);
                 heroButton.Init(buttonConfiguration);
                 heroButton.transform.localScale = Vector3.one;
+
+                heroButtons.Add(heroButton);
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(buttonsLayoutRoot);

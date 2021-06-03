@@ -6,6 +6,7 @@ namespace MiniRPG.Navigation
     {
         string Name { get; }
         Task<bool> OnLoaded(INavigator parentNavigator, INavigationData data);
+        Task<bool> OnHide();
         void SetVisible(bool visible);
     }
 

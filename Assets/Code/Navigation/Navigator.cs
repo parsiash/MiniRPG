@@ -78,7 +78,11 @@ namespace MiniRPG.Navigation
                 var success = await page.OnLoaded(this, loadData);
                 if(success)
                 {
-                    _currentPage?.SetVisible(false);
+                    if(_currentPage != null)
+                    {
+                        await _currentPage.OnHide();
+                        _currentPage.SetVisible(false);
+                    }
 
                     _currentPage = page;
                     page.SetVisible(true);

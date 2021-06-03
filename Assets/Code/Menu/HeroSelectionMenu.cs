@@ -120,14 +120,14 @@ namespace MiniRPG.Menu
         private static UnitInitData ConvertToUnitInitData(ProfileHero hero)
         {
             return new UnitInitData(
-                                                    hero.name,
-                                                    hero.level,
-                                                    hero.experience,
-                                                    new UnitStat(
-                                                        hero.attack,
-                                                        hero.health
-                                                    )
-                                                );
+                hero.name,
+                hero.level,
+                hero.experience,
+                new UnitStat(
+                    hero.attack,
+                    hero.health
+                )
+            );
         }
     }
 }

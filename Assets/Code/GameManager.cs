@@ -56,7 +56,7 @@ namespace MiniRPG
             );
 
             //show hero selection menu
-            await rootNavigator.ShowPage<Menu.HeroSelectionMenu>(new Menu.HeroSelectionMenu.LoadData(game.metagameSimulation));
+            await rootNavigator.ShowPage<Menu.HeroSelectionMenu>(new Menu.MenuPageBase.LoadData(game.metagameSimulation));
         }
 
          private T FindPage<T>() where T : NavigationPageBase
@@ -78,7 +78,7 @@ namespace MiniRPG
                 "Hero_" + heroId,
                 Random.Range(1, 20),
                 Random.Range(1, 20),
-                Random.Range(1, 5),
+                Random.Range(20, 30),
                 Random.Range(20, 30)
             );
         }

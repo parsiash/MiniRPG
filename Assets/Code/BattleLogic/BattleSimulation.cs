@@ -10,9 +10,10 @@ namespace MiniRPG.BattleLogic
         void StartBattle();
         int Turn { get; }
         TurnResult PlayTurn(PlayTurnData data);
-        bool IsFinished { get; }
         IEnumerable<Entity> Entities { get; }
         Player GetPlayer(int playerIndex);
+        bool IsFinished { get; }
+        BattleResult GetBattleResult();
     }
 
     public static class BattleSimulationExtensions
@@ -202,31 +203,43 @@ namespace MiniRPG.BattleLogic
             _turn++;
         }
 
-             public bool IsFinished
+        public BattleResult GetBattleResult()
         {
-            get
+            var loserPlayer = GetLoserPlayer();
+            if(loserPlayer == null)
             {
-                foreach(var player in _players)
+                return null;
+            }
+
+            var winnerPlayerIndex = this.GetOpponentPlayer(loserPlayer.index).index;
+            return new BattleResult(winnerPlayerIndex);
+        }
+
+        private Player GetLoserPlayer()
+        {
+            foreach(var player in _players)
+            {
+                bool hasPlayerLost = true;
+
+                foreach(var unit in player.units)
                 {
-                    bool hasPlayerLost = true;
-
-                    foreach(var unit in player.units)
+                    if(!unit.IsDead)
                     {
-                        if(!unit.IsDead)
-                        {
-                            hasPlayerLost = false;
-                            break;
-                        }
-                    }
-
-                    if(hasPlayerLost)
-                    {
-                        return true;
+                        hasPlayerLost = false;
+                        break;
                     }
                 }
 
-                return false;
+                if(hasPlayerLost)
+                {
+                    return player;
+                }
             }
+
+            return null;
         }
+
+        public bool IsFinished => GetLoserPlayer() != null;
     }
+        
 }

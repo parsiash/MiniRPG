@@ -6,13 +6,15 @@ using UnityEngine;
 
 namespace MiniRPG.Battle
 {
-    public class BattleControllerInitData
+    public class BattleControllerConfiguration
     {
         public BattleInitData battleInitData { get; set; }
+        public System.Action<BattleResult> OnBattleFinishCallback;
 
-        public BattleControllerInitData(BattleInitData battleInitData)
+        public BattleControllerConfiguration(BattleInitData battleInitData, System.Action<BattleResult> onBattleFinishCallback)
         {
             this.battleInitData = battleInitData;
+            OnBattleFinishCallback = onBattleFinishCallback;
         }
     }
 
@@ -39,10 +41,14 @@ namespace MiniRPG.Battle
         }
         private IEntityViewFactory _entityViewFactory;
 
-        public void Init(BattleControllerInitData initData)
+        private BattleControllerConfiguration _configuration;
+
+        public void Init(BattleControllerConfiguration configuration)
         {
-            logger.Log("Battle Controller init with data : " + JsonConvert.SerializeObject(initData));
-            _battleSimulation = new BattleSimulation(initData.battleInitData, logger);
+            _configuration = configuration;
+            logger.LogDebug("Battle init data : " + JsonConvert.SerializeObject(configuration.battleInitData));
+
+            _battleSimulation = new BattleSimulation(configuration.battleInitData, logger);
             battleView.Init(_battleSimulation, entityViewFactory, this);
         }
 
@@ -93,6 +99,16 @@ namespace MiniRPG.Battle
                     }
                 }
             }
+
+            //check battle finish
+            if(_battleSimulation.IsFinished)
+            {
+                var battleResult = _battleSimulation.GetBattleResult();
+                if(_configuration?.OnBattleFinishCallback != null)
+                {
+                    _configuration.OnBattleFinishCallback(battleResult);
+                }
+            }
         }
 
         public void OnRandomAttack(int playerIndex, int attackerId)
@@ -110,6 +126,12 @@ namespace MiniRPG.Battle
             var randomTarget = aliveUnits[Random.Range(0, aliveUnits.Length)];
             
             OnAttack(playerIndex, attackerId, randomTarget.id);
+        }
+
+        public void Clear()
+        {
+            _configuration = null;
+            battleView.Clear();
         }
     }
 }                                                                                                                                      

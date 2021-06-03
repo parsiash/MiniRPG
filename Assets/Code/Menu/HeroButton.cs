@@ -44,6 +44,12 @@ namespace MiniRPG.Menu
             }
         }
 
+        //@TODO : this is a hack and should be fixed by different before and after loaded event for INavigationPage
+        void OnEnable()
+        {
+            Selected = Selected;
+        }
+
         public void Init(HeroButtonConfiguration configuration)
         {
             _hero = configuration.hero;

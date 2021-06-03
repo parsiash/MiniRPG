@@ -31,7 +31,7 @@ namespace MiniRPG
         public Game game { get; private set; }
         public INavigator rootNavigator { get; private set; }
 
-        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        private async void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             logger.Log($"Scene {scene.name} Loaded");
 
@@ -55,7 +55,7 @@ namespace MiniRPG
             );
 
             //show hero selection menu
-            rootNavigator.ShowPage(Navigator.GetPageNameByType<Menu.HeroSelectionMenu>(), new Menu.HeroSelectionMenu.LoadData(game.metagameSimulation));
+            await rootNavigator.ShowPage(Navigator.GetPageNameByType<Menu.HeroSelectionMenu>(), new Menu.HeroSelectionMenu.LoadData(game.metagameSimulation));
         }
 
          private T FindPage<T>() where T : NavigationPageBase

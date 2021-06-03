@@ -302,6 +302,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7be8f7855cf842a4c99b7127caecd59a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onScreeMessagePrefab: {fileID: 7031067383902252669, guid: 4316b42987475ee4691cc5573773feb2, type: 3}
 --- !u!4 &1535065293
 Transform:
   m_ObjectHideFlags: 0

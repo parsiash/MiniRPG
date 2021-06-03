@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using MiniRPG.UI;
 using UnityEngine;
 using UnityEngine.UI;
 

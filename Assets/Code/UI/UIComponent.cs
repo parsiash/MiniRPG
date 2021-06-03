@@ -1,6 +1,6 @@
 using MiniRPG.Common;
 
-namespace MiniRPG.Menu
+namespace MiniRPG.UI
 {
     public class UIComponent : CommonBehaviour
     {

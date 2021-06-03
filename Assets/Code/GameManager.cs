@@ -5,6 +5,7 @@ using MiniRPG.BattleLogic;
 using MiniRPG.Common;
 using MiniRPG.Metagame;
 using MiniRPG.Navigation;
+using MiniRPG.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

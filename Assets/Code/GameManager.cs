@@ -47,7 +47,8 @@ namespace MiniRPG
                         new UserProfile(
                             "GuestUser",
                             Enumerable.Range(1, 8).Select(i => GenerateHero(i)).ToArray(),
-                            new ProfileDeck()
+                            new ProfileDeck(),
+                            11
                         )
                     ),
                     logger

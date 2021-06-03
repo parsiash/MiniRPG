@@ -41,16 +41,26 @@ namespace MiniRPG
             rootNavigator.AddPage(FindPage<Battle.BattlePage>());
 
             //create the game object
+            var playerDataRepository = new PlayerDataRepository(LocalObjectStorage.Instance, logger);
+            var profile = playerDataRepository.LoadUserProfile();
+            if(profile == null)
+            {
+                profile = new UserProfile(
+                    "GuestUser",
+                    Enumerable.Range(1, 3).Select(i => GenerateHero(i)).ToArray(),
+                    new ProfileDeck(),
+                    0
+                );
+
+                playerDataRepository.SaveUserProfile(profile);
+            }
+
             game = new Game(
                 new MetagameSimulation(
                     new User(
-                        new UserProfile(
-                            "GuestUser",
-                            Enumerable.Range(1, 8).Select(i => GenerateHero(i)).ToArray(),
-                            new ProfileDeck(),
-                            11
-                        )
+                        profile
                     ),
+                    new ProfileController(profile, playerDataRepository, logger),
                     logger
                 ),
                 logger

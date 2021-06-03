@@ -1,3 +1,4 @@
+using System;
 using MiniRPG.BattleLogic;
 using MiniRPG.Common;
 
@@ -13,14 +14,19 @@ namespace MiniRPG.Metagame
     {
         private const int MAX_HERO_COUNT = 10;
         private const int NEW_HERO_BATTLE_COUNT = 5;
+        private const int HERO_XP_TO_LEVEL = 5;
         private IUser _user;
         public IUser User => _user;
 
+        private IProfileController _profileController;
+        public IProfileController ProfileController => _profileController;
+
         private ILogger _logger;
 
-        public MetagameSimulation(IUser user, ILogger logger)
+        public MetagameSimulation(IUser user, IProfileController profileController, ILogger logger)
         {
             _user = user;
+            _profileController = profileController;
             _logger = logger;
         }
 
@@ -33,9 +39,11 @@ namespace MiniRPG.Metagame
             if(profile.HeroCount < MAX_HERO_COUNT && profile.battleCount % NEW_HERO_BATTLE_COUNT == 0)
             {
                 var newHero = GameManager.Instance.GenerateHero(profile.MaxHeroId + 1);
-                profile.AddHero(newHero);
-
-                _logger.Log($"New hero acquired \n name : {newHero.name} - id : {newHero.heroId} - experience : {newHero.experience}");
+                bool success = _profileController.Update(new AddHero(newHero));
+                if(success)
+                {
+                    _logger.Log($"New hero acquired \n name : {newHero.name} - id : {newHero.heroId} - experience : {newHero.experience}");
+                }
             }
 
             //experience and level up hanlding
@@ -47,20 +55,22 @@ namespace MiniRPG.Metagame
                     if(unitResult.isAlive)
                     {
                         var hero = profile.GetHero(unitResult.heroId);
-                        if(hero != null)
+                        if(hero == null)
                         {
-                            hero.experience++;
-                            _logger.Log($"Hero with name {hero.name} and id  {hero.heroId} experience increased to {hero.experience}");
+                            _logger.LogError($"No hero with hero id : {unitResult.heroId} found in player's profile.");
+                            continue;
+                        }
 
-                            var previousHeroLevel = hero.level;
-                            hero.level = 1 + hero.experience / 5;
-                            if(hero.level > previousHeroLevel)
-                            {
-                                hero.attack = hero.attack + hero.attack / 10;
-                                hero.health = hero.health + hero.attack / 10;
+                        //increase hero xp
+                        _profileController.Update(new IncreaseHeroXP(unitResult.heroId, 1));
+                        _logger.Log($"Hero with name {hero.name} and id  {hero.heroId} got leveled up. \n new level : {hero.level}. new attack : {hero.attack}. new health: {hero.health}");
 
-                                _logger.Log($"Hero with name {hero.name} and id  {hero.heroId} got leveled up. \n new level : {hero.level}. new attack : {hero.attack}. new health: {hero.health}");
-                            }
+                        //handle hero level up
+                        int heroTargetLevel = hero.experience / HERO_XP_TO_LEVEL + 1;
+                        if (heroTargetLevel > hero.level)
+                        {
+                            _profileController.Update(new IncrementHeroLevel(hero.heroId, heroTargetLevel - hero.level));
+                            _logger.Log($"Hero with name {hero.name} and id  {hero.heroId} got leveled up. \n new level : {hero.level}. new attack : {hero.attack}. new health: {hero.health}");
                         }
                     }
                 }

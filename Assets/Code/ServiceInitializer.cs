@@ -76,15 +76,15 @@ namespace MiniRPG
         private IMetagameSimulation ConfigureMetagameSimulation(IProfileController profileController, IHeroDataSource heroDataSource, IUnitStatProvider unitStatProvider)
         {
             IMetagameSimulation metagameSimulation =
-                            new MetagameSimulation(
-                                new User(
-                                    profileController.Profile
-                                ),
-                                profileController,
-                                heroDataSource,
-                                unitStatProvider,
-                                _logger
-                            );
+                new MetagameSimulation(
+                    new User(
+                        profileController.Profile
+                    ),
+                    profileController,
+                    heroDataSource,
+                    unitStatProvider,
+                    _logger
+                );
             _serviceCollection.AddService<IMetagameSimulation>(metagameSimulation);
             return metagameSimulation;
         }

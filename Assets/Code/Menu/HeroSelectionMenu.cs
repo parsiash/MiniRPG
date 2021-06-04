@@ -152,7 +152,8 @@ namespace MiniRPG.Menu
                         )
                     ),
                     OnBattleResult,
-                    _heroInfoPopup
+                    _heroInfoPopup,
+                    _onScreenMessageFactory
                 )
             );
         }

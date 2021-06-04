@@ -11,15 +11,17 @@ namespace MiniRPG.Battle
     {
         public class LoadData : INavigationData
         {
-            public BattleInitData battleInitData { get; set ;}
-            public Action<BattleResult> onBattleResultCallback { get; set; }
-            public HeroInfoPopup heroInfoPoup { get; set; }
+            public BattleInitData battleInitData { get; private set ;}
+            public Action<BattleResult> onBattleResultCallback { get; private set; }
+            public HeroInfoPopup heroInfoPoup { get; private set; }
+            public IOnScreenMessageFactory onScreenMessageFactory { get; private set; }
 
-            public LoadData(BattleInitData battleInitData, Action<BattleResult> onBattleResultCallback, HeroInfoPopup heroInfoPoup)
+            public LoadData(BattleInitData battleInitData, Action<BattleResult> onBattleResultCallback, HeroInfoPopup heroInfoPoup, IOnScreenMessageFactory onScreenMessageFactory)
             {
                 this.battleInitData = battleInitData;
                 this.onBattleResultCallback = onBattleResultCallback;
                 this.heroInfoPoup = heroInfoPoup;
+                this.onScreenMessageFactory = onScreenMessageFactory;
             }
         }
 
@@ -45,7 +47,8 @@ namespace MiniRPG.Battle
             battleController.Init(new BattleControllerConfiguration(
                 loadData.battleInitData,
                 OnBattleFinish,
-                (unitView) => _heroInfoPopup.ShowPopup(HeroInfo.CreateFromHero(unitView.Unit.hero), unitView.Position)
+                (unitView) => _heroInfoPopup.ShowPopup(HeroInfo.CreateFromHero(unitView.Unit.hero), unitView.Position),
+                loadData.onScreenMessageFactory
             ));
 
             _onBattleResultCallback = loadData.onBattleResultCallback;

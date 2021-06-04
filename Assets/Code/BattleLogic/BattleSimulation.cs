@@ -10,6 +10,7 @@ namespace MiniRPG.BattleLogic
         BattleState State { get; }
         void StartBattle();
         int Turn { get; }
+        bool IsPlayerTurn(int playerIndex);
         TurnResult PlayTurn(PlayTurnData data);
         IEnumerable<Entity> Entities { get; }
         Player GetPlayer(int playerIndex);

@@ -1,6 +1,7 @@
 using MiniRPG.BattleLogic;
 using MiniRPG.BattleView;
 using MiniRPG.Common;
+using MiniRPG.UI;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -8,15 +9,17 @@ namespace MiniRPG.Battle
 {
     public class BattleControllerConfiguration
     {
-        public BattleInitData battleInitData { get; set; }
-        public System.Action<BattleResult> OnBattleFinishCallback;
-        public System.Action<IUnitView> OnUnitHoldCallback;
+        public BattleInitData battleInitData { get; private set; }
+        public System.Action<BattleResult> OnBattleFinishCallback { get; private set; }
+        public System.Action<IUnitView> OnUnitHoldCallback { get; private set; }
+        public IOnScreenMessageFactory onScreenMessageFactory { get; private set; }
 
-        public BattleControllerConfiguration(BattleInitData battleInitData, System.Action<BattleResult> onBattleFinishCallback, System.Action<IUnitView> onUnitHoldCallback)
+        public BattleControllerConfiguration(BattleInitData battleInitData, System.Action<BattleResult> onBattleFinishCallback, System.Action<IUnitView> onUnitHoldCallback, IOnScreenMessageFactory onScreenMessageFactory)
         {
             this.battleInitData = battleInitData;
             OnBattleFinishCallback = onBattleFinishCallback;
             OnUnitHoldCallback = onUnitHoldCallback;
+            this.onScreenMessageFactory = onScreenMessageFactory;
         }
     }
 
@@ -62,6 +65,12 @@ namespace MiniRPG.Battle
 
         public void OnAttack(int playerIndex, int attackerId, int targetId)
         {
+            if(!_battleSimulation.IsPlayerTurn(playerIndex))
+            {
+                _configuration.onScreenMessageFactory.ShowWarning("It is not your turn");
+                return;
+            }
+
             var turnResult = _battleSimulation.PlayTurn(
                 new PlayTurnData(
                     _battleSimulation.Turn,

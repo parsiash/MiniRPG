@@ -5,26 +5,14 @@ using MiniRPG.Common;
 
 namespace MiniRPG.Navigation
 {
-    public interface INavigator
-    {
-        INavigationPage GetPage(string name);
-        void AddPage(INavigationPage page);
-        Task<bool> ShowPage(string name, INavigationData loadData = null);
-    }
-
-    public static class INavigatorExtensions
-    {
-        public static async Task<bool> ShowPage<T>(this INavigator navigator, INavigationData loadData = null) where T : INavigationPage
-        {
-            return await navigator.ShowPage(Navigator.GetPageNameByType<T>(), loadData);
-        }
-    }
-
+    /// <summary>
+    /// The common implementation of the INavigator.
+    /// </summary>
     public class Navigator : INavigator
     {
         private Dictionary<string, INavigationPage> _pages;
-        private ILogger _logger;
         private INavigationPage _currentPage;
+        private ILogger _logger;
 
         public Navigator(ILogger logger)
         {
@@ -34,6 +22,7 @@ namespace MiniRPG.Navigation
 
         public void AddPage(INavigationPage page)
         {
+            //check for page duplicates
             if(_pages.ContainsKey(page.Name))
             {
                 _logger.LogError($"Cannot add the navigation page : {page.Name}. A page with the same name exists in this navigator");
@@ -52,16 +41,6 @@ namespace MiniRPG.Navigation
             }
 
             return null;
-        }
-
-        public static string GetPageNameByType<T>() where T : INavigationPage
-        {
-            return GetPageNameByType(typeof(T));
-        }
-
-        public static string GetPageNameByType(Type pageType)
-        {
-            return pageType.Name;
         }
 
         public async Task<bool> ShowPage(string name, INavigationData loadData = null)
@@ -96,5 +75,16 @@ namespace MiniRPG.Navigation
                 return false;
             }
         }
+
+        public static string GetPageNameByType<T>() where T : INavigationPage
+        {
+            return GetPageNameByType(typeof(T));
+        }
+
+        public static string GetPageNameByType(Type pageType)
+        {
+            return pageType.Name;
+        }
+
     }
 }

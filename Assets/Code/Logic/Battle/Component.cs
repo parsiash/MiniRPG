@@ -2,6 +2,9 @@ using System;
 
 namespace MiniRPG.Logic.Battle
 {
+    /// <summary>
+    /// The base class of components that can be attached to entities in battle logic simulation.
+    /// </summary>
     public class Component
     {
         public Entity entity { get; private set; }

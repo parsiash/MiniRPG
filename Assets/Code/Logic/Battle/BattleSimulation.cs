@@ -5,35 +5,6 @@ using MiniRPG.Logic.Metagame;
 
 namespace MiniRPG.Logic.Battle
 {
-    public interface IBattleSimulation
-    {
-        BattleState State { get; }
-        void StartBattle();
-        int Turn { get; }
-        bool IsPlayerTurn(int playerIndex);
-        TurnResult PlayTurn(PlayTurnData data);
-        IEnumerable<Entity> Entities { get; }
-        Player GetPlayer(int playerIndex);
-        bool IsFinished { get; }
-        BattleResult GetBattleResult();
-    }
-
-    public static class BattleSimulationExtensions
-    {
-        public static Player GetOpponentPlayer(this IBattleSimulation battleSimulation, int playerIndex)
-        {
-            return battleSimulation.GetPlayer(1 - playerIndex);
-        }
-    }
-
-
-    public enum BattleState
-    {
-        Initial,
-        Started,
-        Finished
-    }
-
     /// <summary>
     /// The simulation of battle logic is hanlded in an instance of this class.
     /// </summary>

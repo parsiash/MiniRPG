@@ -4,6 +4,9 @@ using UnityEngine.SceneManagement;
 
 namespace MiniRPG
 {
+    /// <summary>
+    /// The main class of the project, responsible for initializing/reseting the game.
+    /// </summary>
     public class GameManager : SingletonBehaviour<GameManager>
     {
         protected override void Init()

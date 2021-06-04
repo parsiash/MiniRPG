@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace MiniRPG.Menu
 {
+    /// <summary>
+    /// The menu when players choose their heroes.
+    /// </summary>
     public class HeroSelectionMenu : MenuPageBase
     {
         private HeroListPanel heroListPanel => RetrieveCachedComponentInChildren<HeroListPanel>();
@@ -34,33 +37,6 @@ namespace MiniRPG.Menu
             _heroAnouncementHandler = loadData.heroAnouncementHandler;
 
             return true;
-        }
-
-        protected void Update()
-        {
-            CheckAndShowHeroAnouncements();
-        }
-
-        private void CheckAndShowHeroAnouncements()
-        {
-            var heroAnouncements = _heroAnouncementHandler.FlushAnouncements();
-            foreach (var heroAnouncement in heroAnouncements)
-            {
-                var heroButton = heroListPanel.GetHeroButton(heroAnouncement.heroId);
-                if (heroButton)
-                {
-                    _onScreenMessageFactory.ShowMessage(new OnScreenMessage.Configuration(
-                        heroAnouncement.text,
-                        Color.green,
-                        heroButton.GetWorldPosition(),
-                        2f,
-                        0.5f,
-                        0.1f
-                    ));
-                }
-
-                logger.LogDebug("Hero Anouncement" + heroAnouncement.heroId + " " + heroAnouncement.text);
-            }
         }
 
         private void InitializeHeroListPanel()
@@ -114,11 +90,6 @@ namespace MiniRPG.Menu
             );
         }
 
-        public void OnClearDataButtonClick()
-        {
-            GameManager.Instance.ClearAndReset();
-        }
-
         public async void OnStartBattleButtonClick()
         {
             var profile = metagameSimulation.User.Profile;
@@ -130,6 +101,45 @@ namespace MiniRPG.Menu
             }
 
             await navigationLoader.StartBattle();
+        }
+        
+        public void OnClearDataButtonClick()
+        {
+            GameManager.Instance.ClearAndReset();
+        }
+
+
+        protected void Update()
+        {
+            //This check is for showing hero anouncements with on screen messages
+            //It is not a desirable approach to check in update, The better approach is to 
+            //Add OnAfterLoaded life-cycle method to INavigationPage and check it there.
+            CheckAndShowHeroAnouncements();
+        }
+
+        /// <summary>
+        /// Checks all the hero anouncements stored in HeroAnouncementHandler and shows them.
+        /// </summary>
+        private void CheckAndShowHeroAnouncements()
+        {
+            var heroAnouncements = _heroAnouncementHandler.FlushAnouncements();
+            foreach (var heroAnouncement in heroAnouncements)
+            {
+                var heroButton = heroListPanel.GetHeroButton(heroAnouncement.heroId);
+                if (heroButton)
+                {
+                    _onScreenMessageFactory.ShowMessage(new OnScreenMessage.Configuration(
+                        heroAnouncement.text,
+                        Color.green,
+                        heroButton.GetWorldPosition(),
+                        2f,
+                        0.5f,
+                        0.1f
+                    ));
+                }
+
+                logger.LogDebug("Hero Anouncement" + heroAnouncement.heroId + " " + heroAnouncement.text);
+            }
         }
     }
 }

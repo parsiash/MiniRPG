@@ -6,12 +6,20 @@ using MiniRPG.Logic;
 
 namespace MiniRPG
 {
+    /// <summary>
+    /// It is used to generate heroes.
+    /// </summary>
     public interface IHeroDataSource
     {
         HeroData GetRandomHero(int heroId);
         HeroData GetRandomEnemy(int level);
     }
-
+    
+    /// <summary>
+    /// A random hero generator implementation of IHeroDataSource.
+    /// It generates heroes and enemies based on HeroTemplates in Resources folder.
+    /// It can be later replaced by any other implementation, E.g. loading heroes from config files which can be updated from the server.
+    /// </summary>
     public class HeroDataSource : IHeroDataSource
     {
         private IUnitStatProvider unitStatProvider;

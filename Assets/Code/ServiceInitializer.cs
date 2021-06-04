@@ -13,6 +13,12 @@ namespace MiniRPG
         void ConfigureServices();
     }
 
+
+    /// <summary>
+    /// This class is responsible for configuiring the services of the game.
+    /// It is ok for now, but later it can be easily replaced by a DI system where the initialization of service-dependency graph is done in a more automatic way.
+    /// This change will be easy cause all of the main services are configured and injected here.
+    /// </summary>
     public class ServiceInitializer : IServiceInitializer
     {
         private IServiceCollection _serviceCollection;

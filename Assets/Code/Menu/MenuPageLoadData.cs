@@ -3,6 +3,9 @@ using MiniRPG.Navigation;
 
 namespace MiniRPG.Menu
 {
+    /// <summary>
+    /// The base class for Navigation Data of the Menu Pages.
+    /// </summary>
     public class MenuPageLoadData : INavigationData
     {
         public IMetagameSimulation metagameSimulation { get; set; }

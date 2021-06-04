@@ -7,7 +7,7 @@ using UnityEngine;
 namespace MiniRPG.BattleView
 {
     /// <summary>
-    /// Responsible for all battle-related visuals.
+    /// The interface for visual representation of battle simulation.
     /// </summary>
     public interface IBattleView
     {
@@ -30,6 +30,9 @@ namespace MiniRPG.BattleView
         }
     }
 
+    /// <summary>
+    /// Visual representation of battle simulation.
+    /// </summary>
     public class BattleView : CommonBehaviour, IBattleView, IEntityViewEventListener
     {
         private IBattleSimulation _battleSimulation;

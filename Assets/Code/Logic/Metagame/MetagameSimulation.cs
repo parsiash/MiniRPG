@@ -4,6 +4,9 @@ using MiniRPG.Common;
 
 namespace MiniRPG.Logic.Metagame
 {
+    /// <summary>
+    /// The interface of Metagame Simulation.
+    /// </summary>
     public interface IMetagameSimulation
     {
         IUser User { get; }
@@ -12,6 +15,9 @@ namespace MiniRPG.Logic.Metagame
         BattleInitData StartBattle();
     }
 
+    /// <summary>
+    /// This class is responsible for out-of-battle logic of the game (Metagame)
+    /// </summary>
     public class MetagameSimulation : IMetagameSimulation
     {
         private const int MAX_HERO_COUNT = 10;

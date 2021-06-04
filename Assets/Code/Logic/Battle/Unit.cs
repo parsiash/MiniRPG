@@ -3,6 +3,9 @@ using MiniRPG.Logic.Metagame;
 
 namespace MiniRPG.Logic.Battle
 {
+    /// <summary>
+    /// The heroes in battle.
+    /// </summary>
     public class Unit : Entity
     {
         public int index { get; private set; }

@@ -5,6 +5,11 @@ using MiniRPG.Common;
 
 namespace MiniRPG.Logic.Battle
 {
+    /// <summary>
+    /// The abstraction for any object involved in battle logic simulation.
+    /// It is part of the simple Entity-Component architecture of battle logic,
+    /// So it can be easily extended in the future with several abilities, gameplay features, etc.
+    /// </summary>
     public class Entity
     {
         public string name { get; private set; }

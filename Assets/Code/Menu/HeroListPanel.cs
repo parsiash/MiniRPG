@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 namespace MiniRPG.Menu
 {
+    /// <summary>
+    /// The component attached to the hero list panel in Hero Selection Menu.
+    /// </summary>
     public class HeroListPanel : UIComponent
     {
         private List<HeroButton> _heroButtons;
@@ -25,6 +28,7 @@ namespace MiniRPG.Menu
         {
             Clear();
 
+            //initialize buttons
             foreach(var buttonConfiguration in buttonConfigurations)
             {
                 var heroButton = GameObject.Instantiate<HeroButton>(heroButtonPrefab, buttonsLayoutRoot);
@@ -34,6 +38,7 @@ namespace MiniRPG.Menu
                 heroButtons.Add(heroButton);
             }
 
+            //build grid layout of hero buttons
             LayoutRebuilder.ForceRebuildLayoutImmediate(buttonsLayoutRoot);
         }
 
@@ -48,7 +53,7 @@ namespace MiniRPG.Menu
             {
                 GameObject.Destroy(heroButton.gameObject);
             }
-
+            
             heroButtons.Clear();
         }
     }

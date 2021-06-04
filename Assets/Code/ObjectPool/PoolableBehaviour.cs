@@ -1,5 +1,8 @@
 namespace MiniRPG.Common
 {
+    /// <summary>
+    /// The common base class of behaviours that can be used in ObjectPool.
+    /// </summary>
     public class PoolableBehaviour : CommonBehaviour, IPoolable
     {
         public string PrefabId { get; set; }

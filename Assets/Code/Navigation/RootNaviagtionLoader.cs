@@ -9,6 +9,9 @@ using MiniRPG.UI;
 
 namespace MiniRPG
 {
+    /// <summary>
+    /// A helper navigation loader for reusing common navigation boilerplate code.
+    /// </summary>
     public class RootNaviagtionLoader : INavigationLoader
     {
         private INavigator rootNavigator { get; set; }

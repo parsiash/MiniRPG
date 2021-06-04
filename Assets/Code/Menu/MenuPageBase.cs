@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 
 namespace MiniRPG.Menu
 {
+    /// <summary>
+    /// The base class for Navigation Pages that are used in Menu. (Not in battle)
+    /// </summary>
     public class MenuPageBase : NavigationPageBase
     {
         protected IMetagameSimulation metagameSimulation { get; set; }

@@ -7,9 +7,11 @@ using MiniRPG.UI;
 
 namespace MiniRPG.Battle
 {
+    /// <summary>
+    /// The navigation page of battle.
+    /// </summary>
     public class BattlePage : NavigationPageBase
     {
-
         public BattleController battleController => RetrieveCachedComponentInChildren<BattleController>();
         public BattleResultPage battleResultPage => RetrieveCachedComponentInChildren<BattleResultPage>();
         private Action<BattleResult> _onBattleResultCallback;

@@ -7,32 +7,17 @@ using UnityEngine;
 
 namespace MiniRPG.Battle
 {
-    public interface IBattleActionListener
-    {
-        void OnAttack(int playerIndex, int attackerId, int targetId);
-        void OnRandomAttack(int playerIndex, int attackerId);
-        void OnUnitViewClick(IUnitView unitView);
-        void OnUnitViewHold(IUnitView unitView);
-    }
-
-    public enum BattleControllerState
-    {
-        Initial,
-        Started,
-        PlayingTurn,
-        Finished
-    }
-
     /// <summary>
     /// The class responsible for managing the battle logic simulation and syncing it with battle view.
     /// </summary>
     public class BattleController : CommonBehaviour, IBattleActionListener
     {
+        private BattleControllerConfiguration _configuration;
+        public BattleControllerState State { get; private set; }
+
         private IBattleSimulation _battleSimulation;
         private IBattleView battleView => RetrieveCachedComponentInChildren<BattleView.BattleView>();
-        private BattleControllerConfiguration _configuration;
 
-        public BattleControllerState State { get; private set; }
 
         public void Init(BattleControllerConfiguration configuration)
         {

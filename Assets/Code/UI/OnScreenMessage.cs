@@ -3,6 +3,9 @@ using DG.Tweening;
 
 namespace MiniRPG.UI
 {
+    /// <summary>
+    /// The class for fading text messages shown in several parts of the game.
+    /// </summary>
     public class OnScreenMessage : UIComponent
     {
         public class Configuration

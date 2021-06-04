@@ -3,6 +3,9 @@ using MiniRPG.Common;
 
 namespace MiniRPG
 {
+    /// <summary>
+    /// A container for the main dependency services of the project.
+    /// </summary>
     public interface IServiceCollection
     {
         void AddService<T>(T service);

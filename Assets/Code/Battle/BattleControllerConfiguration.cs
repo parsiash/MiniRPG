@@ -5,6 +5,9 @@ using MiniRPG.UI;
 
 namespace MiniRPG.Battle
 {
+    /// <summary>
+    /// The configuration class used for initializing the BattleController.
+    /// </summary>
     public class BattleControllerConfiguration
     {
         public BattleInitData battleInitData { get; private set; }

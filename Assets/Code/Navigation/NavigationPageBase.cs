@@ -3,6 +3,9 @@ using MiniRPG.Common;
 
 namespace MiniRPG.Navigation
 {
+    /// <summary>
+    /// The commoon base class for navigation pages.
+    /// </summary>
     public class NavigationPageBase : CommonBehaviour, INavigationPage
     {
         public virtual string Name => Navigator.GetPageNameByType(GetType());

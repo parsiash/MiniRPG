@@ -30,8 +30,8 @@ namespace MiniRPG
 
             //configure services
             serviceCollection = new ServiceCollection(logger);
-            IServiceInitializer serviceInitializer = new ServiceInitializer(logger);
-            serviceInitializer.ConfigureServices(serviceCollection);
+            IServiceInitializer serviceInitializer = new ServiceInitializer(serviceCollection, logger);
+            serviceInitializer.ConfigureServices();
 
             //load hero selection menu
             var rootMenuLoader = serviceCollection.GetService<IMenuLoader>();

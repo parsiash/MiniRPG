@@ -9,48 +9,50 @@ namespace MiniRPG
 {
     public interface IServiceInitializer
     {
-        void ConfigureServices(IServiceCollection serviceCollection);
+        void ConfigureServices();
     }
 
     public class ServiceInitializer : IServiceInitializer
     {
+        private IServiceCollection _serviceCollection;
         private Common.ILogger _logger;
 
-        public ServiceInitializer(Common.ILogger logger)
+        public ServiceInitializer(IServiceCollection serviceCollection, Common.ILogger logger)
         {
+            _serviceCollection = serviceCollection;
             _logger = logger;
         }
 
-        public void ConfigureServices(IServiceCollection serviceCollection)
+        public void ConfigureServices()
         {
-            INavigator rootNavigator = ConfigureRootNavigator(serviceCollection);
+            INavigator rootNavigator = ConfigureRootNavigator();
 
-            IHeroDataSource heroDataSource = ConfigureHeroDataSource(serviceCollection);
-            IPlayerDataRepository playerDataRepository = ConfigurePlayerDataRepository(serviceCollection, heroDataSource);
-            IProfileController profileController = ConfigureProfileController(serviceCollection, playerDataRepository);
+            IHeroDataSource heroDataSource = ConfigureHeroDataSource();
+            IPlayerDataRepository playerDataRepository = ConfigurePlayerDataRepository(heroDataSource);
+            IProfileController profileController = ConfigureProfileController(playerDataRepository);
             
             IHeroAnouncementHandler heroAnouncementHandler = ConfigureHeroAnouncementHandler(profileController);
-            IOnScreenMessageFactory onScreenMessageFactory = ConfigureOnScreenMessageFactory(serviceCollection);
-            HeroInfoPopup heroInfoPopup = ConfigureHeroInfoPopup(serviceCollection);
+            IOnScreenMessageFactory onScreenMessageFactory = ConfigureOnScreenMessageFactory();
+            HeroInfoPopup heroInfoPopup = ConfigureHeroInfoPopup();
 
-            IMetagameSimulation metagameSimulation = ConfigureMetagameSimulation(serviceCollection, heroDataSource, profileController);
-            IMenuLoader rootMenuLoader = ConfigureRootMenuLoader(serviceCollection, rootNavigator, heroAnouncementHandler, onScreenMessageFactory, heroInfoPopup, metagameSimulation);
+            IMetagameSimulation metagameSimulation = ConfigureMetagameSimulation(heroDataSource, profileController);
+            IMenuLoader rootMenuLoader = ConfigureRootMenuLoader(rootNavigator, heroAnouncementHandler, onScreenMessageFactory, heroInfoPopup, metagameSimulation);
         }
 
-        private static IMenuLoader ConfigureRootMenuLoader(IServiceCollection serviceCollection, INavigator rootNavigator, IHeroAnouncementHandler heroAnouncementHandler, IOnScreenMessageFactory onScreenMessageFactory, HeroInfoPopup heroInfoPopup, IMetagameSimulation metagameSimulation)
+        private IMenuLoader ConfigureRootMenuLoader(INavigator rootNavigator, IHeroAnouncementHandler heroAnouncementHandler, IOnScreenMessageFactory onScreenMessageFactory, HeroInfoPopup heroInfoPopup, IMetagameSimulation metagameSimulation)
         {
             IMenuLoader rootMenuLoader = new RootMenuLoader(
-                            rootNavigator,
-                            metagameSimulation,
-                            heroAnouncementHandler,
-                            onScreenMessageFactory,
-                            heroInfoPopup
-                        );
-            serviceCollection.AddService<IMenuLoader>(rootMenuLoader);
+                        rootNavigator,
+                        metagameSimulation,
+                        heroAnouncementHandler,
+                        onScreenMessageFactory,
+                        heroInfoPopup
+                    );
+            _serviceCollection.AddService<IMenuLoader>(rootMenuLoader);
             return rootMenuLoader;
         }
 
-        private IMetagameSimulation ConfigureMetagameSimulation(IServiceCollection serviceCollection, IHeroDataSource heroDataSource, IProfileController profileController)
+        private IMetagameSimulation ConfigureMetagameSimulation(IHeroDataSource heroDataSource, IProfileController profileController)
         {
             IMetagameSimulation metagameSimulation =
                             new MetagameSimulation(
@@ -61,22 +63,22 @@ namespace MiniRPG
                                 heroDataSource,
                                 _logger
                             );
-            serviceCollection.AddService<IMetagameSimulation>(metagameSimulation);
+            _serviceCollection.AddService<IMetagameSimulation>(metagameSimulation);
             return metagameSimulation;
         }
 
-        private static HeroInfoPopup ConfigureHeroInfoPopup(IServiceCollection serviceCollection)
+        private HeroInfoPopup ConfigureHeroInfoPopup()
         {
             var heroInfoPopup = Object.FindObjectOfType(typeof(HeroInfoPopup), true) as HeroInfoPopup;
-            serviceCollection.AddService<HeroInfoPopup>(heroInfoPopup);
+            _serviceCollection.AddService<HeroInfoPopup>(heroInfoPopup);
             return heroInfoPopup;
         }
 
-        private IOnScreenMessageFactory ConfigureOnScreenMessageFactory(IServiceCollection serviceCollection)
+        private IOnScreenMessageFactory ConfigureOnScreenMessageFactory()
         {
             var onScreenMessagePrefab = Resources.Load<OnScreenMessage>("OnScreenMessage");
             IOnScreenMessageFactory onScreenMessageFactory = new OnScreenMessageFactory(onScreenMessagePrefab);
-            serviceCollection.AddService<IOnScreenMessageFactory>(onScreenMessageFactory);
+            _serviceCollection.AddService<IOnScreenMessageFactory>(onScreenMessageFactory);
             return onScreenMessageFactory;
         }
 
@@ -84,17 +86,19 @@ namespace MiniRPG
         {
             var heroAnouncementHandler = new HeroAnouncementHandler(_logger);
             profileController.AddListener(heroAnouncementHandler);
+            _serviceCollection.AddService<IHeroAnouncementHandler>(heroAnouncementHandler);
+
             return heroAnouncementHandler;
         }
 
-        private IProfileController ConfigureProfileController(IServiceCollection serviceCollection, IPlayerDataRepository playerDataRepository)
+        private IProfileController ConfigureProfileController(IPlayerDataRepository playerDataRepository)
         {
             var profileController = new ProfileController(playerDataRepository.LoadUserProfile(), playerDataRepository, _logger);
-            serviceCollection.AddService<IProfileController>(profileController);
+            _serviceCollection.AddService<IProfileController>(profileController);
             return profileController;
         }
 
-        private IPlayerDataRepository ConfigurePlayerDataRepository(IServiceCollection serviceCollection, IHeroDataSource heroDataSource)
+        private IPlayerDataRepository ConfigurePlayerDataRepository(IHeroDataSource heroDataSource)
         {
             IPlayerDataRepository playerDataRepository = new PlayerDataRepository(LocalObjectStorage.Instance, _logger);
 
@@ -111,23 +115,23 @@ namespace MiniRPG
                 playerDataRepository.SaveUserProfile(profile);
             }
 
-            serviceCollection.AddService<IPlayerDataRepository>(playerDataRepository);
+            _serviceCollection.AddService<IPlayerDataRepository>(playerDataRepository);
             return playerDataRepository;
         }
 
-        private IHeroDataSource ConfigureHeroDataSource(IServiceCollection serviceCollection)
+        private IHeroDataSource ConfigureHeroDataSource()
         {
             IHeroDataSource heroDataSource = new HeroDataSource(HeroTemplatesAsset.Instance, _logger);
-            serviceCollection.AddService<IHeroDataSource>(heroDataSource);
+            _serviceCollection.AddService<IHeroDataSource>(heroDataSource);
             return heroDataSource;
         }
 
-        private INavigator ConfigureRootNavigator(IServiceCollection serviceCollection)
+        private INavigator ConfigureRootNavigator()
         {
             var rootNavigator = new Navigator(_logger);
             rootNavigator.AddPage(FindPage<Menu.HeroSelectionMenu>());
             rootNavigator.AddPage(FindPage<Battle.BattlePage>());
-            serviceCollection.AddService<INavigator>(rootNavigator);
+            _serviceCollection.AddService<INavigator>(rootNavigator);
             return rootNavigator;
         }
 

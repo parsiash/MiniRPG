@@ -8,6 +8,7 @@ namespace MiniRPG.Metagame
     {
         IUser User { get; }
         void OnBattleResult(BattleResult battleResult);
+        void OnDeckChange(ProfileDeck newDeck);
     }
 
     public class MetagameSimulation : IMetagameSimulation
@@ -28,6 +29,12 @@ namespace MiniRPG.Metagame
             _user = user;
             _profileController = profileController;
             _logger = logger;
+        }
+
+        public void OnDeckChange(ProfileDeck newDeck)
+        {
+            var profileUpdate = new ChangeDeck(newDeck); 
+            _profileController.Update(profileUpdate);
         }
 
         public void OnBattleResult(BattleResult battleResult)

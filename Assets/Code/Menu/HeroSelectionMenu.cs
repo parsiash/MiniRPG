@@ -102,9 +102,13 @@ namespace MiniRPG.Menu
             var profile = metagameSimulation.User.Profile;
             var heroId = heroButton.Hero.heroId;
 
+            var newDeck = profile.deck.GetCopy();
+
             if (profile.deck.ContainsHero(heroId))
             {
-                profile.deck.RemoveHero(heroId);
+                newDeck.RemoveHero(heroId);
+                metagameSimulation.OnDeckChange(newDeck);
+                
                 heroButton.Selected = false;
             }else
             {
@@ -113,7 +117,9 @@ namespace MiniRPG.Menu
                     _onScreenMessageFactory.ShowWarning("Deck is full");
                 }else
                 {
-                    profile.deck.AddHero(heroId);
+                    newDeck.AddHero(heroId);
+                    metagameSimulation.OnDeckChange(newDeck);
+
                     heroButton.Selected = true;
                 }
             }

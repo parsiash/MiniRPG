@@ -34,5 +34,10 @@ namespace MiniRPG.Metagame
         {
             heroIds = heroIds.Where(hid => hid != heroId).ToArray();
         }
+
+        public ProfileDeck GetCopy()
+        {
+            return new ProfileDeck(this.heroIds.Clone() as int[]);
+        }
     }
 }

@@ -11,25 +11,25 @@ namespace MiniRPG.BattleView
 
     public class UnitViewFactory : IUnitViewFactory
     {
-        private UnitView _unitViewPrefab;
+        private ObjectPool<UnitView> _unitViewPool;
         private Common.ILogger _logger;
 
-        public UnitViewFactory(UnitView unitViewPrefab, Common.ILogger logger)
+        public UnitViewFactory(ObjectPool<UnitView> unitViewPool, Common.ILogger logger)
         {
-            _unitViewPrefab = unitViewPrefab;
+            _unitViewPool = unitViewPool;
             _logger = logger;
         }
 
         public IUnitView CreateUnitView(string name)
         {
-            return GameObject.Instantiate<UnitView>(_unitViewPrefab);
+            return _unitViewPool.RetrieveInstance(nameof(UnitView), true);
         }
 
         public void DestroyUnitView(IUnitView unitView)
         {
             if(unitView is UnitView)
             {
-                GameObject.Destroy((unitView as CommonBehaviour).gameObject);
+                _unitViewPool.TryPoolInstance(nameof(UnitView), unitView as UnitView);
             }
         }
     }

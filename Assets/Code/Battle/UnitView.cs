@@ -20,7 +20,7 @@ namespace MiniRPG.BattleView
         void Attack(IUnitView target, System.Action OnHit, System.Action OnFinish);
     }
 
-    public class UnitView : CommonBehaviour, IUnitView, IPointerClickHandler
+    public class UnitView : CommonBehaviour, IUnitView, IPointerClickHandler, IPoolable
     {
         private int _health;
         public int Health
@@ -72,6 +72,8 @@ namespace MiniRPG.BattleView
             }
         }
 
+        public string PrefabId { get; set; }
+
         public void Init(Entity entity, IEntityViewEventListener eventListener)
         {
             if(entity is Unit)
@@ -99,7 +101,6 @@ namespace MiniRPG.BattleView
             animationController.PlayAttack(target.Position, OnHit, OnFinish);
         }
 
-
         public virtual void TakeDamage(int damage)
         {
             infoUI.TakeDamage(damage);
@@ -113,6 +114,19 @@ namespace MiniRPG.BattleView
         public void OnHold()
         {
             _eventListener?.OnHold(this);
+        }
+
+        public void OnCreated(string prefabId)
+        {
+            PrefabId = prefabId;
+        }
+
+        public void OnBeforePooled()
+        {
+        }
+
+        public void OnAfterRetrieved()
+        {
         }
     }
 }

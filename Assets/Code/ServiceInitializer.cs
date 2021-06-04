@@ -66,8 +66,15 @@ namespace MiniRPG
 
         private IUnitViewFactory ConfigureUnitViewFactory()
         {
+            //initialize unit view object pool
+            var unitViewPool = ObjectPool<UnitView>.Instance;
             var unitViewPrefab = Resources.Load<UnitView>("Entities/UnitView");
-            var unitViewFactory = new UnitViewFactory(unitViewPrefab, _logger);
+            unitViewPool.AddPrefab(nameof(UnitView), unitViewPrefab);
+            unitViewPool.PrefallocateInstance(nameof(UnitView), 5);
+            _serviceCollection.AddService<ObjectPool<UnitView>>(unitViewPool);
+
+            //initialize unit view factory
+            var unitViewFactory = new UnitViewFactory(unitViewPool, _logger);
             _serviceCollection.AddService<IUnitViewFactory>(unitViewFactory);
 
             return unitViewFactory;

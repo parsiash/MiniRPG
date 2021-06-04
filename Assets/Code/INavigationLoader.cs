@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 
 namespace MiniRPG
 {
-    public interface IMenuLoader
+    public interface INavigationLoader
     {
         Task<bool> LoadHeroSelectionMenu();
         Task<bool> StartBattle();

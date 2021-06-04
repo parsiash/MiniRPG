@@ -7,7 +7,7 @@ namespace MiniRPG.Menu
     public class MenuPageBase : NavigationPageBase
     {
         protected IMetagameSimulation metagameSimulation { get; set; }
-        protected IMenuLoader menuLoader { get; set; }
+        protected INavigationLoader navigationLoader { get; set; }
 
         public override async Task<bool> OnLoaded(INavigator parentNavigator, INavigationData data)
         {
@@ -21,7 +21,7 @@ namespace MiniRPG.Menu
             }
 
             metagameSimulation = loadData.metagameSimulation;
-            menuLoader = loadData.menuLoader;
+            navigationLoader = loadData.navigationLoader;
             return true;
         }
 

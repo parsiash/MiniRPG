@@ -6,12 +6,12 @@ namespace MiniRPG.Menu
     public class MenuPageLoadData : INavigationData
     {
         public IMetagameSimulation metagameSimulation { get; set; }
-        public IMenuLoader menuLoader { get; set; }
+        public INavigationLoader navigationLoader { get; set; }
 
-        public MenuPageLoadData(IMetagameSimulation metagameSimulation, IMenuLoader menuLoader)
+        public MenuPageLoadData(IMetagameSimulation metagameSimulation, INavigationLoader navigationLoader)
         {
             this.metagameSimulation = metagameSimulation;
-            this.menuLoader = menuLoader;
+            this.navigationLoader = navigationLoader;
         }
     }
 }

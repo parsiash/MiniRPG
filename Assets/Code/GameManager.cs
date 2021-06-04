@@ -34,7 +34,7 @@ namespace MiniRPG
             serviceInitializer.ConfigureServices();
 
             //load hero selection menu
-            var rootMenuLoader = serviceCollection.GetService<IMenuLoader>();
+            var rootMenuLoader = serviceCollection.GetService<INavigationLoader>();
             await rootMenuLoader.LoadHeroSelectionMenu();
         }
 

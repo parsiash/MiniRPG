@@ -40,7 +40,7 @@ namespace MiniRPG
             IOnScreenMessageFactory onScreenMessageFactory = ConfigureOnScreenMessageFactory();
 
             IMetagameSimulation metagameSimulation = ConfigureMetagameSimulation(profileController, heroDataSource, unitStatProvider);
-            IMenuLoader rootMenuLoader = ConfigureRootMenuLoader(rootNavigator, heroAnouncementHandler, onScreenMessageFactory, heroInfoPopup, metagameSimulation, unitViewFactory);
+            INavigationLoader rootMenuLoader = ConfigureRootMenuLoader(rootNavigator, heroAnouncementHandler, onScreenMessageFactory, heroInfoPopup, metagameSimulation, unitViewFactory);
         }
 
         private IUnitStatProvider ConfigureUnitStatProvider()
@@ -50,9 +50,9 @@ namespace MiniRPG
             return unitStatProvider;
         }
 
-        private IMenuLoader ConfigureRootMenuLoader(INavigator rootNavigator, IHeroAnouncementHandler heroAnouncementHandler, IOnScreenMessageFactory onScreenMessageFactory, HeroInfoPopup heroInfoPopup, IMetagameSimulation metagameSimulation, IUnitViewFactory unitViewFactory)
+        private INavigationLoader ConfigureRootMenuLoader(INavigator rootNavigator, IHeroAnouncementHandler heroAnouncementHandler, IOnScreenMessageFactory onScreenMessageFactory, HeroInfoPopup heroInfoPopup, IMetagameSimulation metagameSimulation, IUnitViewFactory unitViewFactory)
         {
-            IMenuLoader rootMenuLoader = new RootMenuLoader(
+            INavigationLoader rootNavigationLoader = new RootNaviagtionLoader(
                 rootNavigator,
                 metagameSimulation,
                 heroAnouncementHandler,
@@ -60,8 +60,8 @@ namespace MiniRPG
                 heroInfoPopup,
                 unitViewFactory
             );
-            _serviceCollection.AddService<IMenuLoader>(rootMenuLoader);
-            return rootMenuLoader;
+            _serviceCollection.AddService<INavigationLoader>(rootNavigationLoader);
+            return rootNavigationLoader;
         }
 
         private IMetagameSimulation ConfigureMetagameSimulation(IProfileController profileController, IHeroDataSource heroDataSource, IUnitStatProvider unitStatProvider)

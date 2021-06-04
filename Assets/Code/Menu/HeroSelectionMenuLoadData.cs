@@ -11,7 +11,7 @@ namespace MiniRPG.Menu
 
         public HeroSelectionMenuLoadData(
             IMetagameSimulation metagameSimulation, 
-            IMenuLoader menuLoader,
+            INavigationLoader menuLoader,
             IHeroAnouncementHandler heroAnouncementHandler,
             IOnScreenMessageFactory onScreenMessageFactory,
             HeroInfoPopup heroInfoPopup) : base(metagameSimulation, menuLoader)

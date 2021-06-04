@@ -9,7 +9,7 @@ using MiniRPG.UI;
 
 namespace MiniRPG
 {
-    public class RootMenuLoader : IMenuLoader
+    public class RootNaviagtionLoader : INavigationLoader
     {
         private INavigator rootNavigator { get; set; }
         private IMetagameSimulation metagameSimulation { get; set; }
@@ -18,7 +18,7 @@ namespace MiniRPG
         private HeroInfoPopup heroInfoPopup { get; set; }
         private IUnitViewFactory unitViewFactory { get; set; }
 
-        public RootMenuLoader(INavigator rootNavigator, IMetagameSimulation metagameSimulation, IHeroAnouncementHandler heroAnouncementHandler, IOnScreenMessageFactory onScreenMessageFactory, HeroInfoPopup heroInfoPopup, IUnitViewFactory unitViewFactory)
+        public RootNaviagtionLoader(INavigator rootNavigator, IMetagameSimulation metagameSimulation, IHeroAnouncementHandler heroAnouncementHandler, IOnScreenMessageFactory onScreenMessageFactory, HeroInfoPopup heroInfoPopup, IUnitViewFactory unitViewFactory)
         {
             this.rootNavigator = rootNavigator;
             this.metagameSimulation = metagameSimulation;

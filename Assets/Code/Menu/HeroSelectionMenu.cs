@@ -129,7 +129,7 @@ namespace MiniRPG.Menu
                 return;
             }
 
-            await menuLoader.StartBattle();
+            await navigationLoader.StartBattle();
         }
     }
 }

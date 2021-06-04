@@ -10,6 +10,6 @@ namespace MiniRPG.BattleView
     public interface IUnitViewAnimationController
     {
         void Init(IUnitView unitView);
-        void PlayAttack(Vector2 targetPosition, Action OnHit);
+        void PlayAttack(Vector2 targetPosition, Action OnHit, Action OnFinish);
     }
 }

@@ -30,6 +30,14 @@ namespace MiniRPG.Battle
         void OnUnitViewHold(IUnitView unitView);
     }
 
+    public enum BattleControllerState
+    {
+        Initial,
+        Started,
+        PlayingTurn,
+        Finished
+    }
+
     /// <summary>
     /// The class responsible for managing the battle simulation and syncing it with battle view.
     /// </summary>
@@ -46,8 +54,9 @@ namespace MiniRPG.Battle
             }
         }
         private IEntityViewFactory _entityViewFactory;
-
         private BattleControllerConfiguration _configuration;
+
+        public BattleControllerState State { get; private set; }
 
         public void Init(BattleControllerConfiguration configuration)
         {
@@ -56,20 +65,31 @@ namespace MiniRPG.Battle
 
             _battleSimulation = new BattleSimulation(configuration.battleInitData, logger);
             battleView.Init(_battleSimulation, entityViewFactory, this);
+
+            State = BattleControllerState.Initial;
         }
 
         public void StartBattle()
         { 
             _battleSimulation.StartBattle();
+            State = BattleControllerState.Started;
         }
 
         public void OnAttack(int playerIndex, int attackerId, int targetId)
         {
+            if(State != BattleControllerState.Started)
+            {
+                _configuration.onScreenMessageFactory.ShowWarning("Wait for your turn to play.");
+                return;
+            }
+
             if(!_battleSimulation.IsPlayerTurn(playerIndex))
             {
                 _configuration.onScreenMessageFactory.ShowWarning("It is not your turn");
                 return;
             }
+
+            State = BattleControllerState.PlayingTurn;
 
             var turnResult = _battleSimulation.PlayTurn(
                 new PlayTurnData(
@@ -100,7 +120,25 @@ namespace MiniRPG.Battle
                             {
                                 attackerUnitView.Attack(
                                     targetUnitView,
-                                    () => targetUnitView.TakeDamage(attackResult.actualDamage)
+                                    () => targetUnitView.TakeDamage(attackResult.actualDamage),
+                                    () => {
+                                        //check battle finish
+                                        if(_battleSimulation.IsFinished)
+                                        {
+                                            FinishBattle();
+                                            return;
+                                        }
+
+                                        State = BattleControllerState.Started;
+                                        if(_battleSimulation.IsPlayerTurn(11))
+                                        {
+                                            var aliveUnits = _battleSimulation.GetPlayer(1).AliveUnits;
+                                            if(aliveUnits.Length > 0)
+                                            {
+                                                OnRandomAttack(1, aliveUnits[0].id);
+                                            }
+                                        }
+                                    }
                                 );
                             }
                             break;
@@ -111,16 +149,16 @@ namespace MiniRPG.Battle
                     }
                 }
             }
+        }
 
-            //check battle finish
-            if(_battleSimulation.IsFinished)
+        private void FinishBattle()
+        {
+            var battleResult = _battleSimulation.GetBattleResult();
+            if (_configuration?.OnBattleFinishCallback != null)
             {
-                var battleResult = _battleSimulation.GetBattleResult();
-                if(_configuration?.OnBattleFinishCallback != null)
-                {
-                    _configuration.OnBattleFinishCallback(battleResult);
-                }
+                _configuration.OnBattleFinishCallback(battleResult);
             }
+            State = BattleControllerState.Finished;
         }
 
         public void OnRandomAttack(int playerIndex, int attackerId)

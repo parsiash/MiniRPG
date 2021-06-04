@@ -54,6 +54,8 @@ namespace MiniRPG.Battle
             _onBattleResultCallback = loadData.onBattleResultCallback;
             _heroInfoPopup = loadData.heroInfoPoup;
 
+            battleController.StartBattle();
+
             return true;
         }
 

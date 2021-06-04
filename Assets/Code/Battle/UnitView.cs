@@ -17,7 +17,7 @@ namespace MiniRPG.BattleView
         Unit Unit { get; }
         int Health { get; set; }
         void TakeDamage(int damage);
-        void Attack(IUnitView target, System.Action OnHit);
+        void Attack(IUnitView target, System.Action OnHit, System.Action OnFinish);
     }
 
     public class UnitView : CommonBehaviour, IUnitView, IPointerClickHandler
@@ -92,9 +92,9 @@ namespace MiniRPG.BattleView
             }
         }
 
-        public virtual void Attack(IUnitView target, Action OnHit)
+        public virtual void Attack(IUnitView target, Action OnHit, Action OnFinish)
         {
-            animationController.PlayAttack(target.Position, OnHit);   
+            animationController.PlayAttack(target.Position, OnHit, OnFinish);
         }
 
 

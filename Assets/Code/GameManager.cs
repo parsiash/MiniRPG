@@ -114,7 +114,7 @@ namespace MiniRPG
                 "Hero_" + heroId,
                 Random.Range(1, 20),
                 Random.Range(1, 20),
-                Random.Range(20, 30),
+                Random.Range(10, 15),
                 Random.Range(20, 30)
             );
         }

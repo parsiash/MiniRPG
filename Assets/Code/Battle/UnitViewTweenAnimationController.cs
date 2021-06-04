@@ -17,7 +17,7 @@ namespace MiniRPG.BattleView
             _unitView = unitView;
         }
 
-        public void PlayAttack(Vector2 targetPosition, Action OnHit)
+        public void PlayAttack(Vector2 targetPosition, Action OnHit, Action OnFinish)
         {
             var initialPosition = _unitView.Position;
 
@@ -47,6 +47,11 @@ namespace MiniRPG.BattleView
                     0.3f
                 )
             );
+
+            if(OnFinish != null)
+            {
+                movingSequence.AppendCallback(() => OnFinish());
+            }
         }
     }
 }

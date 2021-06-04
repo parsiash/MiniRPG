@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using MiniRPG.Battle;
-using MiniRPG.BattleLogic;
+using MiniRPG.Logic.Battle;
 using MiniRPG.Common;
 using UnityEngine;
 

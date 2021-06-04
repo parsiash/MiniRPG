@@ -1,4 +1,4 @@
-using MiniRPG.BattleLogic;
+using MiniRPG.Logic.Battle;
 using UnityEngine;
 
 namespace MiniRPG.BattleView

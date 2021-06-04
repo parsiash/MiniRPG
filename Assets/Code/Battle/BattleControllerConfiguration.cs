@@ -1,5 +1,5 @@
 using System;
-using MiniRPG.BattleLogic;
+using MiniRPG.Logic.Battle;
 using MiniRPG.BattleView;
 using MiniRPG.UI;
 

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using MiniRPG.Common;
-using MiniRPG.Metagame;
+using MiniRPG.Logic.Metagame;
 
 namespace MiniRPG
 {

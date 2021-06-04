@@ -1,4 +1,4 @@
-using MiniRPG.Metagame;
+using MiniRPG.Logic.Metagame;
 
 namespace MiniRPG.UI
 {

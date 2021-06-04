@@ -1,7 +1,7 @@
 using System.Linq;
 using MiniRPG.BattleView;
 using MiniRPG.Common;
-using MiniRPG.Metagame;
+using MiniRPG.Logic.Metagame;
 using MiniRPG.Navigation;
 using MiniRPG.UI;
 using UnityEngine;

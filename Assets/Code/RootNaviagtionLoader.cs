@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using MiniRPG.Battle;
-using MiniRPG.BattleLogic;
+using MiniRPG.Logic.Battle;
 using MiniRPG.BattleView;
 using MiniRPG.Menu;
-using MiniRPG.Metagame;
+using MiniRPG.Logic.Metagame;
 using MiniRPG.Navigation;
 using MiniRPG.UI;
 

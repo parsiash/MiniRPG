@@ -1,4 +1,4 @@
-using MiniRPG.BattleLogic;
+using MiniRPG.Logic.Battle;
 using MiniRPG.Common;
 using MiniRPG.Navigation;
 using MiniRPG.UI;

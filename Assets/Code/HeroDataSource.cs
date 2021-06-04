@@ -1,7 +1,8 @@
-using MiniRPG.BattleLogic;
+using MiniRPG.Logic.Battle;
 using MiniRPG.Common;
-using MiniRPG.Metagame;
+using MiniRPG.Logic.Metagame;
 using UnityEngine;
+using MiniRPG.Logic;
 
 namespace MiniRPG
 {

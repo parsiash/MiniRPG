@@ -52,7 +52,7 @@ namespace MiniRPG
             {
                 profile = new UserProfile(
                     "GuestUser",
-                    Enumerable.Range(0, 10).Select(i => heroDataSource.GetRandomHero(i)).ToArray(),
+                    Enumerable.Range(0, 3).Select(i => heroDataSource.GetRandomHero(i)).ToArray(),
                     new ProfileDeck(),
                     0
                 );

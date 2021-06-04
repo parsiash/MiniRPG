@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using MiniRPG.Common;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,7 +17,7 @@ namespace MiniRPG.UI
 
         [Header("Amount of time to fill a whole bar")]
         [SerializeField] protected float fillingTime = 1f;
-        [SerializeField] protected AnimationCurve fillingCurve;
+        private Tweener _fillingTweener;
 
         public void Init(float maxValue, float initialValue)
         {
@@ -39,27 +40,20 @@ namespace MiniRPG.UI
         {
             StopFilling();
 
-            _coroutineRunner = new CoroutineRunner(
-                _currentValue,
-                targetValue,
-                Mathf.Max((targetValue - _currentValue) / _maxValue * fillingTime, 0.5f),
-                fillingCurve,
+            _fillingTweener = DOTween.To(
+                () => _currentValue,
                 (v) => SetValue(v),
-                () => SetValue(targetValue),
-                this
+                targetValue,
+                Mathf.Max((targetValue - _currentValue) / _maxValue * fillingTime, 0.5f)
             );
-
-            _coroutineRunner.Start();
         }
-
-        private CoroutineRunner _coroutineRunner;
 
         private void StopFilling()
         {
-            if(_coroutineRunner != null)
+            if(_fillingTweener != null)
             {
-                _coroutineRunner.Stop();
-                _coroutineRunner = null;
+                _fillingTweener.Kill();
+                _fillingTweener = null;
             }
         }
     }

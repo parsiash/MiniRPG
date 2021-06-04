@@ -11,6 +11,7 @@ namespace MiniRPG.Battle
     {
         void OnAttack(int playerIndex, int attackerId, int targetId);
         void OnRandomAttack(int playerIndex, int attackerId);
+        void OnUnitViewClick(IUnitView unitView);
         void OnUnitViewHold(IUnitView unitView);
     }
 
@@ -23,7 +24,7 @@ namespace MiniRPG.Battle
     }
 
     /// <summary>
-    /// The class responsible for managing the battle simulation and syncing it with battle view.
+    /// The class responsible for managing the battle logic simulation and syncing it with battle view.
     /// </summary>
     public class BattleController : CommonBehaviour, IBattleActionListener
     {
@@ -48,6 +49,44 @@ namespace MiniRPG.Battle
         { 
             _battleSimulation.StartBattle();
             State = BattleControllerState.Started;
+        }
+
+        
+        public void OnUnitViewClick(IUnitView unitView)
+        {
+            var playerIndex = unitView.Unit.PlayerIndex;
+            if(playerIndex == 1)
+            {
+                _configuration.onScreenMessageFactory.ShowWarning("Click on your own units.");
+                return;
+            }
+
+            OnRandomAttack(
+                playerIndex,
+                unitView.Unit.id
+            );
+        }
+
+        public void OnUnitViewHold(IUnitView unitView)
+        {
+            _configuration.OnUnitHoldCallback(unitView);
+        }
+        
+        public void OnRandomAttack(int playerIndex, int attackerId)
+        {
+            //get alive units of the opponent player
+            var otherPlayer = _battleSimulation.GetOpponentPlayer(playerIndex);
+            var aliveUnits = otherPlayer.AliveUnits;
+            if(aliveUnits.Length == 0)
+            {
+                logger.LogDebug($"Random attack failed. Opponent has no alive units!");
+                return;
+            }
+
+            //choose random target
+            var randomTarget = aliveUnits[Random.Range(0, aliveUnits.Length)];
+            
+            OnAttack(playerIndex, attackerId, randomTarget.id);
         }
 
         public void OnAttack(int playerIndex, int attackerId, int targetId)
@@ -85,46 +124,7 @@ namespace MiniRPG.Battle
                     switch(eventName)
                     {
                         case TurnEvent.ATTACK:
-                            var attackResult = turnEvent.GetData<AttackResult>();
-                            var attackerUnitView = battleView.GetEntityView(attackResult.attackerId) as UnitView;
-                            var targetUnitView = battleView.GetEntityView(attackResult.targetId) as UnitView;
-                            if(!targetUnitView)
-                            {
-                                logger.LogError($"Showing attack result failed. Target Unit View Not Found : {attackResult.targetId}");
-                            }else
-                            {
-                                attackerUnitView.Attack(
-                                    targetUnitView,
-                                    () => {
-                                        targetUnitView.TakeDamage(attackResult.actualDamage);
-                                        _configuration.onScreenMessageFactory.ShowMessage(
-                                            new OnScreenMessage.Configuration(
-                                                "-" + attackResult.actualDamage,
-                                                Color.red,
-                                                targetUnitView.Position
-                                            )
-                                        );
-                                    },
-                                    () => {
-                                        //check battle finish
-                                        if(_battleSimulation.IsFinished)
-                                        {
-                                            FinishBattle();
-                                            return;
-                                        }
-
-                                        State = BattleControllerState.Started;
-                                        if(_battleSimulation.IsPlayerTurn(11))
-                                        {
-                                            var aliveUnits = _battleSimulation.GetPlayer(1).AliveUnits;
-                                            if(aliveUnits.Length > 0)
-                                            {
-                                                OnRandomAttack(1, aliveUnits[0].id);
-                                            }
-                                        }
-                                    }
-                                );
-                            }
+                            OnAttackEvent(turnEvent);
                             break;
 
                         default:
@@ -133,6 +133,59 @@ namespace MiniRPG.Battle
                     }
                 }
             }
+        }
+
+        private void OnAttackEvent(TurnEvent turnEvent)
+        {
+            var attackResult = turnEvent.GetData<AttackResult>();
+            var attackerUnitView = battleView.GetEntityView(attackResult.attackerId) as UnitView;
+            var targetUnitView = battleView.GetEntityView(attackResult.targetId) as UnitView;
+            if (!targetUnitView)
+            {
+                logger.LogError($"Showing attack result failed. Target Unit View Not Found : {attackResult.targetId}");
+            }
+            else
+            {
+                attackerUnitView.Attack(
+                    targetUnitView,
+                    () => OnAttackHit(targetUnitView, attackResult.actualDamage),
+                    () => OnAttackFinished()
+                );
+            }
+        }
+
+        private void OnAttackFinished()
+        {
+            //check battle finish
+            if (_battleSimulation.IsFinished)
+            {
+                FinishBattle();
+                return;
+            }
+
+            State = BattleControllerState.Started;
+
+            //play enemy turn
+            if (_battleSimulation.IsPlayerTurn(1))
+            {
+                var aliveUnits = _battleSimulation.GetPlayer(1).AliveUnits;
+                if (aliveUnits.Length > 0)
+                {
+                    OnRandomAttack(1, aliveUnits[0].id);
+                }
+            }
+        }
+
+        private void OnAttackHit(UnitView targetUnitView, int actualDamage)
+        {
+            targetUnitView.TakeDamage(actualDamage);
+            _configuration.onScreenMessageFactory.ShowMessage(
+                new OnScreenMessage.Configuration(
+                    "-" + actualDamage,
+                    Color.red,
+                    targetUnitView.Position
+                )
+            );
         }
 
         private void FinishBattle()
@@ -145,32 +198,12 @@ namespace MiniRPG.Battle
             State = BattleControllerState.Finished;
         }
 
-        public void OnRandomAttack(int playerIndex, int attackerId)
-        {
-            //get alive units of the opponent player
-            var otherPlayer = _battleSimulation.GetOpponentPlayer(playerIndex);
-            var aliveUnits = otherPlayer.AliveUnits;
-            if(aliveUnits.Length == 0)
-            {
-                logger.LogDebug($"Random attack failed. Opponent has no alive units!");
-                return;
-            }
-
-            //choose random target
-            var randomTarget = aliveUnits[Random.Range(0, aliveUnits.Length)];
-            
-            OnAttack(playerIndex, attackerId, randomTarget.id);
-        }
-
         public void Clear()
         {
             _configuration = null;
             battleView.Clear();
         }
 
-        public void OnUnitViewHold(IUnitView unitView)
-        {
-            _configuration.OnUnitHoldCallback(unitView);
-        }
+        
     }
 }                                                                                                                                      

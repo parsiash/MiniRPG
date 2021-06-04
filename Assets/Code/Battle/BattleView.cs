@@ -138,10 +138,7 @@ namespace MiniRPG.BattleView
             var unitView = entityView as UnitView;
             if(unitView)
             {
-                _battleActionListener.OnRandomAttack(
-                    unitView.Unit.PlayerIndex,
-                    unitView.Unit.id
-                );
+                _battleActionListener.OnUnitViewClick(unitView);
             }
         }
 

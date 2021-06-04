@@ -56,6 +56,7 @@ namespace MiniRPG.BattleView
         private IEntityViewEventListener _eventListener;
 
         private UnitViewInfoUI infoUI => RetrieveCachedComponentInChildren<UnitViewInfoUI>();
+        private SpriteRenderer heroSprite => RetrieveCachedComponentInChildren<SpriteRenderer>();
 
         private IUnitViewAnimationController _animationController;
         private IUnitViewAnimationController animationController
@@ -83,9 +84,10 @@ namespace MiniRPG.BattleView
                 infoUI.Init(_unit.healthComponent.health, _unit.healthComponent.maxHealth);
                 animationController.Init(this);
 
+                heroSprite.color = _unit.hero.color.GetUnityColor();
 
-                //@TODO; temporary for test
-                RetrieveCachedComponentInChildren<SpriteRenderer>().color = _unit.hero.color.GetUnityColor();
+                transform.localScale = Vector3.one * _unit.hero.size;
+                
             }else
             {
                 logger.LogError($"Cannot init unit view : {gameObject.name}. The given entity is not a unit entity.");

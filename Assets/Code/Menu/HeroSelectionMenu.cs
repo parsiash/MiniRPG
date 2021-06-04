@@ -110,7 +110,7 @@ namespace MiniRPG.Menu
             {
                 if(!profile.deck.HasCapacity)
                 {
-                    logger.LogError("Cannot add hero to deck: Deck is full.");
+                    _onScreenMessageFactory.ShowWarning("Deck is full");
                 }else
                 {
                     profile.deck.AddHero(heroId);
@@ -131,9 +131,9 @@ namespace MiniRPG.Menu
         {
             var profile = metagameSimulation.User.Profile;
             var deck = profile.deck;
-            if (deck.IsEmpty)
+            if (deck.HeroCount != 3)
             {
-                logger.LogError("Cannot Start the battle. Deck is empty");
+                _onScreenMessageFactory.ShowWarning("Select 3 heroes");
                 return;
             }
 

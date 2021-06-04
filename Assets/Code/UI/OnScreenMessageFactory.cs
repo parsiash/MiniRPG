@@ -7,6 +7,20 @@ namespace MiniRPG.UI
         OnScreenMessage ShowMessage(OnScreenMessage.Configuration config);
     }
 
+    public static class OnScreenMessageFactoryExtensions
+    {
+        public static OnScreenMessage ShowWarning(this IOnScreenMessageFactory factory, string warningMessage)
+        {
+            return factory.ShowMessage(
+                new OnScreenMessage.Configuration(
+                    warningMessage,
+                    new Color(0.8f, 0.1f, 0.1f),
+                    Vector2.zero
+                )
+            );
+        }
+    }
+
     public class OnScreenMessageFactory : IOnScreenMessageFactory
     {
         private OnScreenMessage _onScreenMessagePrefab;

@@ -25,7 +25,6 @@ namespace MiniRPG
 
         public async Task<bool> LoadHeroSelectionMenu()
         {
-            //@TODO; this is a hack, everything should go in a battle loader component
             return await rootNavigator.ShowPage<Menu.HeroSelectionMenu>(
                 new HeroSelectionMenuLoadData(
                     metagameSimulation, 

@@ -77,7 +77,7 @@ namespace MiniRPG.BattleView
         private IEntityView CreateUnitView(Unit unit)
         {
             //check for entity id conflict
-            if(entityViews.ContainsKey(unit.id))
+            if (entityViews.ContainsKey(unit.id))
             {
                 logger.LogError($"Cannot create unit view. A unit view with the same id : {unit.id} already exists");
                 return null;
@@ -86,23 +86,27 @@ namespace MiniRPG.BattleView
             //create and intialize the unit view
             var unitView = _unitViewFactory.CreateUnitView("UnitView");
             unitView.Init(unit, this);
+            SetUnitViewPosition(unitView);
+
             entityViews.Add(unit.id, unitView);
 
-            //set unit view position
+            return unitView;
+        }
+
+        private void SetUnitViewPosition(IUnitView unitView)
+        {
             var player = unitView.Unit.player;
             var unitIndexInTeam = player.GetUnitIndexById(unitView.Unit.id);
-            if(unitIndexInTeam >= 0 && unitIndexInTeam < unitPositions.Length)
+            if (unitIndexInTeam >= 0 && unitIndexInTeam < unitPositions.Length)
             {
                 var position = unitPositions[unitIndexInTeam].position;
-                if(player.index == 1)
+                if (player.index == 1)
                 {
                     position.x = -position.x;
                 }
-                
+
                 unitView.Position = position;
             }
-
-            return unitView;
         }
 
         public IEntityView GetEntityView(int entityId)

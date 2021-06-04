@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using MiniRPG.BattleLogic;
 using MiniRPG.Common;
 
@@ -9,6 +10,7 @@ namespace MiniRPG.Metagame
         IUser User { get; }
         void OnBattleResult(BattleResult battleResult);
         void OnDeckChange(ProfileDeck newDeck);
+        BattleInitData StartBattle();
     }
 
     public class MetagameSimulation : IMetagameSimulation
@@ -22,12 +24,15 @@ namespace MiniRPG.Metagame
         private IProfileController _profileController;
         public IProfileController ProfileController => _profileController;
 
+        private IHeroDataSource _heroDataSource;
+
         private ILogger _logger;
 
-        public MetagameSimulation(IUser user, IProfileController profileController, ILogger logger)
+        public MetagameSimulation(IUser user, IProfileController profileController, IHeroDataSource heroDataSource, ILogger logger)
         {
             _user = user;
             _profileController = profileController;
+            _heroDataSource = heroDataSource;
             _logger = logger;
         }
 
@@ -35,6 +40,24 @@ namespace MiniRPG.Metagame
         {
             var profileUpdate = new ChangeDeck(newDeck); 
             _profileController.Update(profileUpdate);
+        }
+
+        public BattleInitData StartBattle()
+        {
+            var profile = _user.Profile;
+            
+            return new BattleLogic.BattleInitData(
+                new PlayerInitData(
+                    0,
+                    profile.deck.heroIds.Select(hid => profile.GetHero(hid)).Select(
+                        hero => UnitInitData.CreateFromHeroData(hero)
+                    ).ToArray()
+                ),
+                new PlayerInitData(
+                        1,
+                        new UnitInitData[] { UnitInitData.CreateFromHeroData(_heroDataSource.GetRandomEnemy(10)) }
+                )
+            );
         }
 
         public void OnBattleResult(BattleResult battleResult)
@@ -46,7 +69,7 @@ namespace MiniRPG.Metagame
             if(profile.HeroCount < MAX_HERO_COUNT && profile.battleCount % NEW_HERO_BATTLE_COUNT == 0)
             {
                 //@TODO: big hackkkk
-                var newHero = GameManager.Instance.GenerateHero(profile.MaxHeroId + 1);
+                var newHero = _heroDataSource.GetRandomHero(profile.MaxHeroId + 1);
                 bool success = _profileController.Update(new AddHero(newHero));
                 if(success)
                 {

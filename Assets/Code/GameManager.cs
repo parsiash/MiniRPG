@@ -43,6 +43,8 @@ namespace MiniRPG
             rootNavigator.AddPage(FindPage<Menu.HeroSelectionMenu>());
             rootNavigator.AddPage(FindPage<Battle.BattlePage>());
 
+            IHeroDataSource heroDataSource = new HeroDataSource(HeroTemplatesAsset.Instance, logger);
+
             //create the game object
             var playerDataRepository = new PlayerDataRepository(LocalObjectStorage.Instance, logger);
             var profile = playerDataRepository.LoadUserProfile();
@@ -50,7 +52,7 @@ namespace MiniRPG
             {
                 profile = new UserProfile(
                     "GuestUser",
-                    Enumerable.Range(1, 3).Select(i => GenerateHero(i)).ToArray(),
+                    Enumerable.Range(0, 10).Select(i => heroDataSource.GetRandomHero(i)).ToArray(),
                     new ProfileDeck(),
                     0
                 );
@@ -74,6 +76,7 @@ namespace MiniRPG
                         profile
                     ),
                     profileController,
+                    heroDataSource,
                     logger
                 ),
                 heroAnouncementHandler,
@@ -105,34 +108,6 @@ namespace MiniRPG
             }
 
             return page;
-        }
-
-        public HeroData GenerateEnemyHero()
-        {
-            return new HeroData(
-                -1,
-                "Enemy",
-                Random.Range(1, 20),
-                Random.Range(1, 20),
-                Random.Range(10, 15),
-                Random.Range(20, 30),
-                MyColor.FromUnityColor(Color.red),
-                3
-            );
-        }
-
-        public HeroData GenerateHero(int heroId)
-        {
-            return new HeroData(
-                heroId,
-                "Hero_" + heroId,
-                Random.Range(1, 20),
-                Random.Range(1, 20),
-                Random.Range(10, 15),
-                Random.Range(20, 30),
-                MyColor.FromUnityColor(Random.ColorHSV()),
-                1
-            );
         }
 
         public void ClearAndReset()

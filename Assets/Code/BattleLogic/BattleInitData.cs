@@ -51,6 +51,20 @@ namespace MiniRPG.BattleLogic
             this.hero = hero;
             this.entityId = entityId;
         }
+
+        public static UnitInitData CreateFromHeroData(HeroData hero)
+        {
+            return new UnitInitData(
+                hero.name,
+                hero.level,
+                hero.experience,
+                new UnitStat(
+                    hero.attack,
+                    hero.health
+                ),
+                hero
+            );
+        }
     }
 
 }

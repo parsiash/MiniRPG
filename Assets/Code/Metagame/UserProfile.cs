@@ -11,7 +11,18 @@ namespace MiniRPG.Metagame
         public int battleCount { get; set; }
 
         public int HeroCount => heroes.Length;
-        public int MaxHeroId => heroes.Max(h => h.heroId);
+        public int MaxHeroId
+        {
+            get
+            {
+                if(HeroCount == 0)
+                {
+                    return -1;
+                }
+
+                return heroes.Max(h => h.heroId);
+            }
+        }
 
         public UserProfile(string username, HeroData[] heroes, ProfileDeck deck, int battleCount)
         {

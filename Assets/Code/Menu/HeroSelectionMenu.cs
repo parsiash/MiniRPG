@@ -150,18 +150,7 @@ namespace MiniRPG.Menu
 
             await parentNavigator.ShowPage<Battle.BattlePage>(
                 new Battle.BattlePage.LoadData(
-                    new BattleLogic.BattleInitData(
-                        new PlayerInitData(
-                            0,
-                            deck.heroIds.Select(hid => profile.GetHero(hid)).Select(
-                                hero => ConvertToUnitInitData(hero)
-                            ).ToArray()
-                        ),
-                        new PlayerInitData(
-                                1,
-                                new UnitInitData[] { ConvertToUnitInitData(GameManager.Instance.GenerateEnemyHero()) }
-                        )
-                    ),
+                    metagameSimulation.StartBattle(),
                     OnBattleResult,
                     _heroInfoPopup,
                     _onScreenMessageFactory
@@ -176,20 +165,6 @@ namespace MiniRPG.Menu
             //@TODO; this is a hack, everything should go in a battle loader component
             await GameManager.Instance.rootNavigator.ShowPage<Menu.HeroSelectionMenu>(
                 new LoadData(metagameSimulation, _heroAnouncementHandler, _onScreenMessageFactory, _heroInfoPopup)
-            );
-        }
-
-        private static UnitInitData ConvertToUnitInitData(HeroData hero)
-        {
-            return new UnitInitData(
-                hero.name,
-                hero.level,
-                hero.experience,
-                new UnitStat(
-                    hero.attack,
-                    hero.health
-                ),
-                hero
             );
         }
     }

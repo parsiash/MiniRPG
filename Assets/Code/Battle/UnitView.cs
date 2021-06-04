@@ -9,6 +9,7 @@ namespace MiniRPG.BattleView
     public interface IEntityViewEventListener
     {
         void OnClick(IEntityView entityView);
+        void OnHold(IEntityView entityView);
     }
 
     public interface IUnitView : IEntityView
@@ -105,6 +106,11 @@ namespace MiniRPG.BattleView
         public void OnPointerClick(PointerEventData eventData)
         {
             _eventListener?.OnClick(this);
+        }
+
+        public void OnHold()
+        {
+            _eventListener?.OnHold(this);
         }
     }
 }

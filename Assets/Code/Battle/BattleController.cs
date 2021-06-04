@@ -10,11 +10,13 @@ namespace MiniRPG.Battle
     {
         public BattleInitData battleInitData { get; set; }
         public System.Action<BattleResult> OnBattleFinishCallback;
+        public System.Action<IUnitView> OnUnitHoldCallback;
 
-        public BattleControllerConfiguration(BattleInitData battleInitData, System.Action<BattleResult> onBattleFinishCallback)
+        public BattleControllerConfiguration(BattleInitData battleInitData, System.Action<BattleResult> onBattleFinishCallback, System.Action<IUnitView> onUnitHoldCallback)
         {
             this.battleInitData = battleInitData;
             OnBattleFinishCallback = onBattleFinishCallback;
+            OnUnitHoldCallback = onUnitHoldCallback;
         }
     }
 
@@ -22,6 +24,7 @@ namespace MiniRPG.Battle
     {
         void OnAttack(int playerIndex, int attackerId, int targetId);
         void OnRandomAttack(int playerIndex, int attackerId);
+        void OnUnitViewHold(IUnitView unitView);
     }
 
     /// <summary>
@@ -132,6 +135,11 @@ namespace MiniRPG.Battle
         {
             _configuration = null;
             battleView.Clear();
+        }
+
+        public void OnUnitViewHold(IUnitView unitView)
+        {
+            _configuration.OnUnitHoldCallback(unitView);
         }
     }
 }                                                                                                                                      

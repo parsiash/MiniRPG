@@ -1,4 +1,5 @@
 using MiniRPG.Common;
+using MiniRPG.Metagame;
 
 namespace MiniRPG.BattleLogic
 {
@@ -7,7 +8,7 @@ namespace MiniRPG.BattleLogic
         public int index { get; private set; }
         public int level { get; private set; }
         public int experience { get; private set; }
-        public int heroId { get; private set; }
+        public ProfileHero hero { get; private set; }
         private Player _player;
 
         public Unit(string name, int id, BattleSimulation battleSimulation, ILogger logger) : base(name, id, battleSimulation, logger)
@@ -21,16 +22,16 @@ namespace MiniRPG.BattleLogic
         public HealthComponent healthComponent => GetComponent<HealthComponent>();
         public bool IsDead => healthComponent.IsDead;
 
-        public void Init(Player player, int heroId)
+        public void Init(Player player, ProfileHero hero)
         {
-            this.heroId = heroId;
+            this.hero = hero;
             _player = player;
         }
 
         public UnitBattleResult GetResult()
         {
             return new UnitBattleResult(
-                heroId,
+                hero.heroId,
                 !IsDead
             );
         }

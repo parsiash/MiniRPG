@@ -144,5 +144,13 @@ namespace MiniRPG.BattleView
                 );
             }
         }
+
+        public void OnHold(IEntityView entityView)
+        {
+            if(entityView is IUnitView)
+            {
+                _battleActionListener.OnUnitViewHold(entityView as IUnitView);
+            }
+        }
     }
 }

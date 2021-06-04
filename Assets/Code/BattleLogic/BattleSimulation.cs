@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MiniRPG.Common;
+using MiniRPG.Metagame;
 
 namespace MiniRPG.BattleLogic
 {
@@ -95,7 +96,7 @@ namespace MiniRPG.BattleLogic
             unit.AddComponent(new HealthComponent(unitStat.health));
             unit.AddComponent(new AttackComponent(unitStat.attack));
 
-            RegisterUnit(unit, player, unitInitData.heroId);
+            RegisterUnit(unit, player, unitInitData.hero);
 
             return unit;
         }
@@ -173,7 +174,7 @@ namespace MiniRPG.BattleLogic
             );
         }
 
-        private void RegisterUnit(int playerIndex, Unit unit, int heroId)
+        private void RegisterUnit(int playerIndex, Unit unit, ProfileHero hero)
         {
             var player = GetPlayer(playerIndex);
             if(player == null)
@@ -182,14 +183,14 @@ namespace MiniRPG.BattleLogic
                 return;
             }
 
-            RegisterUnit(unit, player, heroId);
+            RegisterUnit(unit, player, hero);
         }
 
-        private void RegisterUnit(Unit unit, Player player, int heroId)
+        private void RegisterUnit(Unit unit, Player player, ProfileHero hero)
         {
             _entityManager.AddEntity(unit);
             player.AddUnit(unit);
-            unit.Init(player, heroId);
+            unit.Init(player, hero);
         }
 
         public void DestroyUnit(Unit unit)

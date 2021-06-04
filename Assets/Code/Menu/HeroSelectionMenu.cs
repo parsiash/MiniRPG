@@ -121,16 +121,8 @@ namespace MiniRPG.Menu
 
         public void OnHeroButtonHold(HeroButton heroButton)
         {
-            var hero = heroButton.Hero;
-
             _heroInfoPopup.ShowPopup(
-                new HeroInfo(
-                    new HeroInfoAttribute("Name", hero.name),
-                    new HeroInfoAttribute("Level", hero.level),
-                    new HeroInfoAttribute("Experience", hero.experience),
-                    new HeroInfoAttribute("Attack", hero.attack),
-                    new HeroInfoAttribute("Health", hero.health)
-                ),
+                HeroInfo.CreateFromHero(heroButton.Hero),
                 heroButton.rectTranform.GetWorldPosition()
             );
         }
@@ -159,7 +151,8 @@ namespace MiniRPG.Menu
                                 new UnitInitData[] { ConvertToUnitInitData(GameManager.Instance.GenerateHero(-1)) }
                         )
                     ),
-                    OnBattleResult
+                    OnBattleResult,
+                    _heroInfoPopup
                 )
             );
         }
@@ -184,7 +177,7 @@ namespace MiniRPG.Menu
                     hero.attack,
                     hero.health
                 ),
-                hero.heroId
+                hero
             );
         }
     }

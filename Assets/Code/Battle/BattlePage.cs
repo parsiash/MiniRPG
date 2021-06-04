@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MiniRPG.BattleLogic;
 using MiniRPG.Common;
 using MiniRPG.Navigation;
+using MiniRPG.UI;
 
 namespace MiniRPG.Battle
 {
@@ -12,17 +13,21 @@ namespace MiniRPG.Battle
         {
             public BattleInitData battleInitData { get; set ;}
             public Action<BattleResult> onBattleResultCallback { get; set; }
+            public HeroInfoPopup heroInfoPoup { get; set; }
 
-            public LoadData(BattleInitData battleInitData, Action<BattleResult> onBattleResultCallback)
+            public LoadData(BattleInitData battleInitData, Action<BattleResult> onBattleResultCallback, HeroInfoPopup heroInfoPoup)
             {
                 this.battleInitData = battleInitData;
                 this.onBattleResultCallback = onBattleResultCallback;
+                this.heroInfoPoup = heroInfoPoup;
             }
         }
 
-        private Action<BattleResult> _onBattleResultCallback;
         public BattleController battleController => RetrieveCachedComponentInChildren<BattleController>();
         public BattleResultPage battleResultPage => RetrieveCachedComponentInChildren<BattleResultPage>();
+        private Action<BattleResult> _onBattleResultCallback;
+        private HeroInfoPopup _heroInfoPopup;
+
 
         public override async Task<bool> OnLoaded(INavigator parentNavigator, INavigationData data)
         {
@@ -39,10 +44,12 @@ namespace MiniRPG.Battle
             //init battle controller
             battleController.Init(new BattleControllerConfiguration(
                 loadData.battleInitData,
-                OnBattleFinish
+                OnBattleFinish,
+                (unitView) => _heroInfoPopup.ShowPopup(HeroInfo.CreateFromHero(unitView.Unit.hero), unitView.Position)
             ));
 
             _onBattleResultCallback = loadData.onBattleResultCallback;
+            _heroInfoPopup = loadData.heroInfoPoup;
 
             return true;
         }

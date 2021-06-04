@@ -3,6 +3,7 @@ using MiniRPG.BattleLogic;
 using MiniRPG.Common;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Rendering;
 
 namespace MiniRPG.BattleView
 {
@@ -18,6 +19,8 @@ namespace MiniRPG.BattleView
         int Health { get; set; }
         void TakeDamage(int damage);
         void Attack(IUnitView target, System.Action OnHit, System.Action OnFinish);
+        void SetSortingOrder(int sortingOrder);
+        void SetInfoBarVisible(bool visible);
     }
 
     public class UnitView : PoolableBehaviour, IUnitView, IPointerClickHandler
@@ -58,7 +61,6 @@ namespace MiniRPG.BattleView
         private UnitViewInfoUI infoUI => RetrieveCachedComponentInChildren<UnitViewInfoUI>();
         private SpriteRenderer heroSprite => RetrieveCachedComponentInChildren<SpriteRenderer>();
 
-        private IUnitViewAnimationController _animationController;
         private IUnitViewAnimationController animationController
         {
             get
@@ -71,6 +73,22 @@ namespace MiniRPG.BattleView
                 return _animationController;
             }
         }
+        private IUnitViewAnimationController _animationController;
+
+        private SortingGroup sortingGroup
+        {
+            get
+            {
+                if(!_sortingGroup)
+                {
+                    _sortingGroup = gameObject.AddComponent<SortingGroup>();
+                }
+
+                return _sortingGroup;
+            }
+        }
+        private SortingGroup _sortingGroup;
+
 
         public void Init(Entity entity, IEntityViewEventListener eventListener)
         {
@@ -112,6 +130,17 @@ namespace MiniRPG.BattleView
         public void OnHold()
         {
             _eventListener?.OnHold(this);
+        }
+
+      
+        public void SetSortingOrder(int sortingOrder)
+        {
+            sortingGroup.sortingOrder = sortingOrder;
+        }
+
+        public void SetInfoBarVisible(bool visible)
+        {
+            infoUI.SetVisible(visible);
         }
     }
 }

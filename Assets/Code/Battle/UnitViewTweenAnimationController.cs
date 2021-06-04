@@ -21,6 +21,9 @@ namespace MiniRPG.BattleView
         {
             var initialPosition = _unitView.Position;
 
+            _unitView.SetInfoBarVisible(false);
+            _unitView.SetSortingOrder(10);
+
             //move to target
             var movingSequence = DOTween.Sequence();
 
@@ -47,6 +50,11 @@ namespace MiniRPG.BattleView
                     0.3f
                 )
             );
+
+            movingSequence.AppendCallback(() => {
+                _unitView.SetInfoBarVisible(true);
+                _unitView.SetSortingOrder(0);
+            });
 
             if(OnFinish != null)
             {

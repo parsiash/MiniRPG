@@ -9,21 +9,6 @@ namespace MiniRPG.Battle
 {
     public class BattlePage : NavigationPageBase
     {
-        public class LoadData : INavigationData
-        {
-            public BattleInitData battleInitData { get; private set ;}
-            public Action<BattleResult> onBattleResultCallback { get; private set; }
-            public HeroInfoPopup heroInfoPoup { get; private set; }
-            public IOnScreenMessageFactory onScreenMessageFactory { get; private set; }
-
-            public LoadData(BattleInitData battleInitData, Action<BattleResult> onBattleResultCallback, HeroInfoPopup heroInfoPoup, IOnScreenMessageFactory onScreenMessageFactory)
-            {
-                this.battleInitData = battleInitData;
-                this.onBattleResultCallback = onBattleResultCallback;
-                this.heroInfoPoup = heroInfoPoup;
-                this.onScreenMessageFactory = onScreenMessageFactory;
-            }
-        }
 
         public BattleController battleController => RetrieveCachedComponentInChildren<BattleController>();
         public BattleResultPage battleResultPage => RetrieveCachedComponentInChildren<BattleResultPage>();
@@ -35,7 +20,7 @@ namespace MiniRPG.Battle
         {
             await base.OnLoaded(parentNavigator, data);
 
-            var loadData = data as LoadData;
+            var loadData = data as BattlePageLoadData;
             if(loadData == null)
             {
                 throw new NavigationException($"Loading battle page failed. No load data is provided to {nameof(OnLoaded)} method.");
@@ -46,6 +31,7 @@ namespace MiniRPG.Battle
             //init battle controller
             battleController.Init(new BattleControllerConfiguration(
                 loadData.battleInitData,
+                loadData.unitViewFactory,
                 OnBattleFinish,
                 (unitView) => _heroInfoPopup.ShowPopup(HeroInfo.CreateFromHero(unitView.Unit.hero), unitView.Position),
                 loadData.onScreenMessageFactory

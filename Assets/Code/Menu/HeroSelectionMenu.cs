@@ -129,21 +129,7 @@ namespace MiniRPG.Menu
                 return;
             }
 
-            await parentNavigator.ShowPage<Battle.BattlePage>(
-                new Battle.BattlePage.LoadData(
-                    metagameSimulation.StartBattle(),
-                    OnBattleResult,
-                    _heroInfoPopup,
-                    _onScreenMessageFactory
-                )
-            );
-        }
-
-        private async void OnBattleResult(BattleResult battleResult)
-        {
-            metagameSimulation.OnBattleResult(battleResult);
-
-            await menuLoader.LoadHeroSelectionMenu();
+            await menuLoader.StartBattle();
         }
     }
 }

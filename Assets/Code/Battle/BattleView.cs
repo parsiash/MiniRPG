@@ -13,7 +13,7 @@ namespace MiniRPG.BattleView
     {
         void Init(
             IBattleSimulation battleSimulation, 
-            IEntityViewFactory entityViewFactory, 
+            IUnitViewFactory entityViewFactory, 
             IBattleActionListener battleActionListener
         );
 
@@ -33,7 +33,7 @@ namespace MiniRPG.BattleView
     public class BattleView : CommonBehaviour, IBattleView, IEntityViewEventListener
     {
         private IBattleSimulation _battleSimulation;
-        private IEntityViewFactory _entityViewFactory;
+        private IUnitViewFactory _unitViewFactory;
         private IBattleActionListener _battleActionListener;
 
         /// <summary>
@@ -53,59 +53,56 @@ namespace MiniRPG.BattleView
 
         [SerializeField] private Transform[] unitPositions;
 
-        public void Init(IBattleSimulation battleSimulation, IEntityViewFactory entityViewFactory, IBattleActionListener battleActionListener)
+        public void Init(IBattleSimulation battleSimulation, IUnitViewFactory unitViewFactory, IBattleActionListener battleActionListener)
         {
             Clear();
 
             _battleSimulation = battleSimulation;
-            _entityViewFactory = entityViewFactory;
+            _unitViewFactory = unitViewFactory;
             _battleActionListener = battleActionListener;
 
             //create entity views
             foreach(var entity in battleSimulation.Entities)
             {
-                var entityView = CreateEntityView(entity);
+                if(entity is Unit)
+                {
+                    CreateUnitView(entity as Unit);
+                }else
+                {
+                    logger.LogError($"Entity type : {entity.GetType().Name} currently not supported in battle view");
+                }
             }
         }
 
-        private IEntityView CreateEntityView(Entity entity)
+        private IEntityView CreateUnitView(Unit unit)
         {
             //check for entity id conflict
-            if(entityViews.ContainsKey(entity.id))
+            if(entityViews.ContainsKey(unit.id))
             {
-                logger.LogError($"Cannot create entity view. An entity view with the same id : {entity.id} already exists");
+                logger.LogError($"Cannot create unit view. A unit view with the same id : {unit.id} already exists");
                 return null;
             }
 
-            //create and intialize the entity view
-            var entityView = _entityViewFactory.CreateEntityView("UnitView");
-            if(entityView != null)
-            {
-                entityView.Init(entity, this);
-                entityViews.Add(entity.id, entityView);
+            //create and intialize the unit view
+            var unitView = _unitViewFactory.CreateUnitView("UnitView");
+            unitView.Init(unit, this);
+            entityViews.Add(unit.id, unitView);
 
-                logger.LogDebug($"Entity View with name : {entity.name} and id : {entity.id} created and added to battle view.");
-            }
-
-            //intialize unit view
-            if(entityView is IUnitView)
+            //set unit view position
+            var player = unitView.Unit.player;
+            var unitIndexInTeam = player.GetUnitIndexById(unitView.Unit.id);
+            if(unitIndexInTeam >= 0 && unitIndexInTeam < unitPositions.Length)
             {
-                var unitView = entityView as IUnitView;
-                var player = unitView.Unit.player;
-                var unitIndexInTeam = player.GetUnitIndexById(unitView.Unit.id);
-                if(unitIndexInTeam >= 0 && unitIndexInTeam < unitPositions.Length)
+                var position = unitPositions[unitIndexInTeam].position;
+                if(player.index == 1)
                 {
-                    var position = unitPositions[unitIndexInTeam].position;
-                    if(player.index == 1)
-                    {
-                        position.x = -position.x;
-                    }
-                    
-                    unitView.Position = position;
+                    position.x = -position.x;
                 }
+                
+                unitView.Position = position;
             }
 
-            return entityView;
+            return unitView;
         }
 
         public IEntityView GetEntityView(int entityId)
@@ -120,7 +117,10 @@ namespace MiniRPG.BattleView
 
         private void DestroyEntityView(IEntityView entityView)
         {
-            _entityViewFactory.DestroyEntityView(entityView);
+            if(entityView is IUnitView)
+            {
+                _unitViewFactory.DestroyUnitView(entityView as IUnitView);
+            }
         }
 
         public void Clear()

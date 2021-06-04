@@ -1,4 +1,5 @@
 using System.Linq;
+using MiniRPG.BattleView;
 using MiniRPG.Common;
 using MiniRPG.Metagame;
 using MiniRPG.Navigation;
@@ -33,11 +34,13 @@ namespace MiniRPG
             IProfileController profileController = ConfigureProfileController(playerDataRepository);
 
             IHeroAnouncementHandler heroAnouncementHandler = ConfigureHeroAnouncementHandler(profileController);
-            IOnScreenMessageFactory onScreenMessageFactory = ConfigureOnScreenMessageFactory();
             HeroInfoPopup heroInfoPopup = ConfigureHeroInfoPopup();
 
+            IUnitViewFactory unitViewFactory = ConfigureUnitViewFactory();
+            IOnScreenMessageFactory onScreenMessageFactory = ConfigureOnScreenMessageFactory();
+
             IMetagameSimulation metagameSimulation = ConfigureMetagameSimulation(profileController, heroDataSource, unitStatProvider);
-            IMenuLoader rootMenuLoader = ConfigureRootMenuLoader(rootNavigator, heroAnouncementHandler, onScreenMessageFactory, heroInfoPopup, metagameSimulation);
+            IMenuLoader rootMenuLoader = ConfigureRootMenuLoader(rootNavigator, heroAnouncementHandler, onScreenMessageFactory, heroInfoPopup, metagameSimulation, unitViewFactory);
         }
 
         private IUnitStatProvider ConfigureUnitStatProvider()
@@ -47,17 +50,27 @@ namespace MiniRPG
             return unitStatProvider;
         }
 
-        private IMenuLoader ConfigureRootMenuLoader(INavigator rootNavigator, IHeroAnouncementHandler heroAnouncementHandler, IOnScreenMessageFactory onScreenMessageFactory, HeroInfoPopup heroInfoPopup, IMetagameSimulation metagameSimulation)
+        private IMenuLoader ConfigureRootMenuLoader(INavigator rootNavigator, IHeroAnouncementHandler heroAnouncementHandler, IOnScreenMessageFactory onScreenMessageFactory, HeroInfoPopup heroInfoPopup, IMetagameSimulation metagameSimulation, IUnitViewFactory unitViewFactory)
         {
             IMenuLoader rootMenuLoader = new RootMenuLoader(
-                        rootNavigator,
-                        metagameSimulation,
-                        heroAnouncementHandler,
-                        onScreenMessageFactory,
-                        heroInfoPopup
-                    );
+                rootNavigator,
+                metagameSimulation,
+                heroAnouncementHandler,
+                onScreenMessageFactory,
+                heroInfoPopup,
+                unitViewFactory
+            );
             _serviceCollection.AddService<IMenuLoader>(rootMenuLoader);
             return rootMenuLoader;
+        }
+
+        private IUnitViewFactory ConfigureUnitViewFactory()
+        {
+            var unitViewPrefab = Resources.Load<UnitView>("Entities/UnitView");
+            var unitViewFactory = new UnitViewFactory(unitViewPrefab, _logger);
+            _serviceCollection.AddService<IUnitViewFactory>(unitViewFactory);
+
+            return unitViewFactory;
         }
 
         private IMetagameSimulation ConfigureMetagameSimulation(IProfileController profileController, IHeroDataSource heroDataSource, IUnitStatProvider unitStatProvider)

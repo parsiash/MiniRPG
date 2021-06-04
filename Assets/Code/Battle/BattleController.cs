@@ -7,22 +7,6 @@ using UnityEngine;
 
 namespace MiniRPG.Battle
 {
-    public class BattleControllerConfiguration
-    {
-        public BattleInitData battleInitData { get; private set; }
-        public System.Action<BattleResult> OnBattleFinishCallback { get; private set; }
-        public System.Action<IUnitView> OnUnitHoldCallback { get; private set; }
-        public IOnScreenMessageFactory onScreenMessageFactory { get; private set; }
-
-        public BattleControllerConfiguration(BattleInitData battleInitData, System.Action<BattleResult> onBattleFinishCallback, System.Action<IUnitView> onUnitHoldCallback, IOnScreenMessageFactory onScreenMessageFactory)
-        {
-            this.battleInitData = battleInitData;
-            OnBattleFinishCallback = onBattleFinishCallback;
-            OnUnitHoldCallback = onUnitHoldCallback;
-            this.onScreenMessageFactory = onScreenMessageFactory;
-        }
-    }
-
     public interface IBattleActionListener
     {
         void OnAttack(int playerIndex, int attackerId, int targetId);
@@ -45,15 +29,6 @@ namespace MiniRPG.Battle
     {
         private IBattleSimulation _battleSimulation;
         private IBattleView battleView => RetrieveCachedComponentInChildren<BattleView.BattleView>();
-        private IEntityViewFactory entityViewFactory
-        {
-            get
-            {
-                _entityViewFactory = _entityViewFactory ?? new EntityViewFactory(logger);
-                return _entityViewFactory;
-            }
-        }
-        private IEntityViewFactory _entityViewFactory;
         private BattleControllerConfiguration _configuration;
 
         public BattleControllerState State { get; private set; }
@@ -64,7 +39,7 @@ namespace MiniRPG.Battle
             logger.LogDebug("Battle init data : " + JsonConvert.SerializeObject(configuration.battleInitData));
 
             _battleSimulation = new BattleSimulation(configuration.battleInitData, logger);
-            battleView.Init(_battleSimulation, entityViewFactory, this);
+            battleView.Init(_battleSimulation, configuration.unitViewFactory, this);
 
             State = BattleControllerState.Initial;
         }
@@ -177,7 +152,7 @@ namespace MiniRPG.Battle
             var aliveUnits = otherPlayer.AliveUnits;
             if(aliveUnits.Length == 0)
             {
-                logger.LogError($"Random attack failed. Opponent has no alive units!");
+                logger.LogDebug($"Random attack failed. Opponent has no alive units!");
                 return;
             }
 

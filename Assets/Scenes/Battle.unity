@@ -298,6 +298,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Main Camera
       objectReference: {fileID: 0}
+    - target: {fileID: 2245473176073730655, guid: 09aaa67c5ed6983469487db2f3f91fea, type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 0.21266466
+      objectReference: {fileID: 0}
+    - target: {fileID: 2245473176073730655, guid: 09aaa67c5ed6983469487db2f3f91fea, type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 0.22901835
+      objectReference: {fileID: 0}
+    - target: {fileID: 2245473176073730655, guid: 09aaa67c5ed6983469487db2f3f91fea, type: 3}
+      propertyPath: m_BackGroundColor.b
+      value: 0.254717
+      objectReference: {fileID: 0}
     - target: {fileID: 2245473176073730720, guid: 09aaa67c5ed6983469487db2f3f91fea, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -661,6 +673,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 999053704}
     m_Modifications:
+    - target: {fileID: 167737518453686083, guid: 80d1cb0a696508f40b274d5aed2851da, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 167737518453686083, guid: 80d1cb0a696508f40b274d5aed2851da, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 167737518453686083, guid: 80d1cb0a696508f40b274d5aed2851da, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 167737518453686083, guid: 80d1cb0a696508f40b274d5aed2851da, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1599813833751407920, guid: 80d1cb0a696508f40b274d5aed2851da, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -709,10 +737,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: BattleResultPage
       objectReference: {fileID: 0}
+    - target: {fileID: 3745486811896676271, guid: 80d1cb0a696508f40b274d5aed2851da, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7166597662191802859, guid: 80d1cb0a696508f40b274d5aed2851da, type: 3}
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 8203228860299493157, guid: 80d1cb0a696508f40b274d5aed2851da, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8203228860299493157, guid: 80d1cb0a696508f40b274d5aed2851da, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8203228860299493157, guid: 80d1cb0a696508f40b274d5aed2851da, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8203228860299493157, guid: 80d1cb0a696508f40b274d5aed2851da, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 80d1cb0a696508f40b274d5aed2851da, type: 3}
 --- !u!4 &6384257993653772315 stripped

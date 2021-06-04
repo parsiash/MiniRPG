@@ -12,7 +12,7 @@ namespace MiniRPG.UI
             this.attributes = attributes;
         }
 
-        public static HeroInfo CreateFromHero(ProfileHero hero)
+        public static HeroInfo CreateFromHero(HeroData hero)
         {
             return new HeroInfo(
                 new HeroInfoAttribute("Name", hero.name),

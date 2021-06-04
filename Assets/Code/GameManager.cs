@@ -107,15 +107,31 @@ namespace MiniRPG
             return page;
         }
 
-        public ProfileHero GenerateHero(int heroId)
+        public HeroData GenerateEnemyHero()
         {
-            return new ProfileHero(
+            return new HeroData(
+                -1,
+                "Enemy",
+                Random.Range(1, 20),
+                Random.Range(1, 20),
+                Random.Range(10, 15),
+                Random.Range(20, 30),
+                MyColor.FromUnityColor(Color.red),
+                3
+            );
+        }
+
+        public HeroData GenerateHero(int heroId)
+        {
+            return new HeroData(
                 heroId,
                 "Hero_" + heroId,
                 Random.Range(1, 20),
                 Random.Range(1, 20),
                 Random.Range(10, 15),
-                Random.Range(20, 30)
+                Random.Range(20, 30),
+                MyColor.FromUnityColor(Random.ColorHSV()),
+                1
             );
         }
 

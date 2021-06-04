@@ -153,7 +153,7 @@ namespace MiniRPG.Menu
                         ),
                         new PlayerInitData(
                                 1,
-                                new UnitInitData[] { ConvertToUnitInitData(GameManager.Instance.GenerateHero(-1)) }
+                                new UnitInitData[] { ConvertToUnitInitData(GameManager.Instance.GenerateEnemyHero()) }
                         )
                     ),
                     OnBattleResult,
@@ -173,7 +173,7 @@ namespace MiniRPG.Menu
             );
         }
 
-        private static UnitInitData ConvertToUnitInitData(ProfileHero hero)
+        private static UnitInitData ConvertToUnitInitData(HeroData hero)
         {
             return new UnitInitData(
                 hero.name,

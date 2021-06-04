@@ -85,7 +85,7 @@ namespace MiniRPG.BattleView
 
 
                 //@TODO; temporary for test
-                RetrieveCachedComponentInChildren<SpriteRenderer>().color = _unit.PlayerIndex == 0 ? Color.blue : Color.red;
+                RetrieveCachedComponentInChildren<SpriteRenderer>().color = _unit.hero.color.GetUnityColor();
             }else
             {
                 logger.LogError($"Cannot init unit view : {gameObject.name}. The given entity is not a unit entity.");

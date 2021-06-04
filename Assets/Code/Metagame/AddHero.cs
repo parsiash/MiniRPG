@@ -2,9 +2,9 @@ namespace MiniRPG.Metagame
 {
     public class AddHero : IProfileUpdate
     {
-        public ProfileHero hero { get; private set; }
+        public HeroData hero { get; private set; }
 
-        public AddHero(ProfileHero hero)
+        public AddHero(HeroData hero)
         {
             this.hero = hero;
         }

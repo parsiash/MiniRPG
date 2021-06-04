@@ -38,6 +38,7 @@ namespace MiniRPG.Metagame
             profile.battleCount++;
             if(profile.HeroCount < MAX_HERO_COUNT && profile.battleCount % NEW_HERO_BATTLE_COUNT == 0)
             {
+                //@TODO: big hackkkk
                 var newHero = GameManager.Instance.GenerateHero(profile.MaxHeroId + 1);
                 bool success = _profileController.Update(new AddHero(newHero));
                 if(success)

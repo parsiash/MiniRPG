@@ -175,7 +175,7 @@ namespace MiniRPG.BattleLogic
             );
         }
 
-        private void RegisterUnit(int playerIndex, Unit unit, ProfileHero hero)
+        private void RegisterUnit(int playerIndex, Unit unit, HeroData hero)
         {
             var player = GetPlayer(playerIndex);
             if(player == null)
@@ -187,7 +187,7 @@ namespace MiniRPG.BattleLogic
             RegisterUnit(unit, player, hero);
         }
 
-        private void RegisterUnit(Unit unit, Player player, ProfileHero hero)
+        private void RegisterUnit(Unit unit, Player player, HeroData hero)
         {
             _entityManager.AddEntity(unit);
             player.AddUnit(unit);

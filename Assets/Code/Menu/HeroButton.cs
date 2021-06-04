@@ -10,11 +10,11 @@ namespace MiniRPG.Menu
     public class HeroButtonConfiguration
     {
         public bool selected { get; set; }
-        public ProfileHero hero { get; set; }
+        public HeroData hero { get; set; }
         public Action<HeroButton> OnClickCallback { get; set; }
         public Action<HeroButton> OnHoldCallback { get; set; }
 
-        public HeroButtonConfiguration(bool selected, ProfileHero hero, Action<HeroButton> onClickCallback, Action<HeroButton> onHoldCallback)
+        public HeroButtonConfiguration(bool selected, HeroData hero, Action<HeroButton> onClickCallback, Action<HeroButton> onHoldCallback)
         {
             this.selected = selected;
             this.hero = hero;
@@ -25,14 +25,16 @@ namespace MiniRPG.Menu
 
     public class HeroButton : UIComponent
     {
-        private ProfileHero _hero;
-        public ProfileHero Hero => _hero;
+        private HeroData _hero;
+        public HeroData Hero => _hero;
         private bool _selected;
         private Action<HeroButton> _onClickCallback;
         private Action<HeroButton> _onHoldCallback;
 
-        private const string ANIM_PARAM_SELECTED = "Selected";
+        [SerializeField] private Image heroImage;
         private Button button => RetrieveCachedComponentInChildren<Button>();
+
+        private const string ANIM_PARAM_SELECTED = "Selected";
         private Animator animator => RetrieveCachedComponentInChildren<Animator>();
 
         public bool Selected
@@ -62,9 +64,10 @@ namespace MiniRPG.Menu
             _onClickCallback = configuration.OnClickCallback;
             _onHoldCallback = configuration.OnHoldCallback;
 
+            heroImage.color = configuration.hero.color.GetUnityColor();
+
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => OnButtonClick());
-
         }
 
         private void OnButtonClick()

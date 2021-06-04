@@ -27,16 +27,24 @@ namespace MiniRPG
         {
             INavigator rootNavigator = ConfigureRootNavigator();
 
-            IHeroDataSource heroDataSource = ConfigureHeroDataSource();
+            IUnitStatProvider unitStatProvider = ConfigureUnitStatProvider();
+            IHeroDataSource heroDataSource = ConfigureHeroDataSource(unitStatProvider);
             IPlayerDataRepository playerDataRepository = ConfigurePlayerDataRepository(heroDataSource);
             IProfileController profileController = ConfigureProfileController(playerDataRepository);
-            
+
             IHeroAnouncementHandler heroAnouncementHandler = ConfigureHeroAnouncementHandler(profileController);
             IOnScreenMessageFactory onScreenMessageFactory = ConfigureOnScreenMessageFactory();
             HeroInfoPopup heroInfoPopup = ConfigureHeroInfoPopup();
 
-            IMetagameSimulation metagameSimulation = ConfigureMetagameSimulation(heroDataSource, profileController);
+            IMetagameSimulation metagameSimulation = ConfigureMetagameSimulation(profileController, heroDataSource, unitStatProvider);
             IMenuLoader rootMenuLoader = ConfigureRootMenuLoader(rootNavigator, heroAnouncementHandler, onScreenMessageFactory, heroInfoPopup, metagameSimulation);
+        }
+
+        private IUnitStatProvider ConfigureUnitStatProvider()
+        {
+            IUnitStatProvider unitStatProvider = new UnitStatProvider();
+            _serviceCollection.AddService<IUnitStatProvider>(unitStatProvider);
+            return unitStatProvider;
         }
 
         private IMenuLoader ConfigureRootMenuLoader(INavigator rootNavigator, IHeroAnouncementHandler heroAnouncementHandler, IOnScreenMessageFactory onScreenMessageFactory, HeroInfoPopup heroInfoPopup, IMetagameSimulation metagameSimulation)
@@ -52,7 +60,7 @@ namespace MiniRPG
             return rootMenuLoader;
         }
 
-        private IMetagameSimulation ConfigureMetagameSimulation(IHeroDataSource heroDataSource, IProfileController profileController)
+        private IMetagameSimulation ConfigureMetagameSimulation(IProfileController profileController, IHeroDataSource heroDataSource, IUnitStatProvider unitStatProvider)
         {
             IMetagameSimulation metagameSimulation =
                             new MetagameSimulation(
@@ -61,6 +69,7 @@ namespace MiniRPG
                                 ),
                                 profileController,
                                 heroDataSource,
+                                unitStatProvider,
                                 _logger
                             );
             _serviceCollection.AddService<IMetagameSimulation>(metagameSimulation);
@@ -119,9 +128,9 @@ namespace MiniRPG
             return playerDataRepository;
         }
 
-        private IHeroDataSource ConfigureHeroDataSource()
+        private IHeroDataSource ConfigureHeroDataSource(IUnitStatProvider unitStatProvider)
         {
-            IHeroDataSource heroDataSource = new HeroDataSource(HeroTemplatesAsset.Instance, _logger);
+            IHeroDataSource heroDataSource = new HeroDataSource(unitStatProvider, HeroTemplatesAsset.Instance, _logger);
             _serviceCollection.AddService<IHeroDataSource>(heroDataSource);
             return heroDataSource;
         }

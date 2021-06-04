@@ -24,6 +24,14 @@ namespace MiniRPG.Metagame
             }
         }
 
+        public int AverageHeroLevel
+        {
+            get
+            {
+                return (int)(heroes.Average(h => h.level));
+            }
+        }
+
         public UserProfile(string username, HeroData[] heroes, ProfileDeck deck, int battleCount)
         {
             this.username = username;

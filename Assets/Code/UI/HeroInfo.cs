@@ -18,8 +18,8 @@ namespace MiniRPG.UI
                 new HeroInfoAttribute("Name", hero.name),
                 new HeroInfoAttribute("Level", hero.level),
                 new HeroInfoAttribute("Experience", hero.experience),
-                new HeroInfoAttribute("Attack", hero.attack),
-                new HeroInfoAttribute("Health", hero.health)
+                new HeroInfoAttribute("Attack", hero.stat.attack),
+                new HeroInfoAttribute("Health", hero.stat.health)
             );
         }
 

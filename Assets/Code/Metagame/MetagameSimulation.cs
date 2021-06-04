@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using MiniRPG.BattleLogic;
 using MiniRPG.Common;
@@ -25,14 +24,16 @@ namespace MiniRPG.Metagame
         public IProfileController ProfileController => _profileController;
 
         private IHeroDataSource _heroDataSource;
+        private IUnitStatProvider _unitStatProvider;
 
         private ILogger _logger;
 
-        public MetagameSimulation(IUser user, IProfileController profileController, IHeroDataSource heroDataSource, ILogger logger)
+        public MetagameSimulation(IUser user, IProfileController profileController, IHeroDataSource heroDataSource, IUnitStatProvider unitStatProvider, ILogger logger)
         {
             _user = user;
             _profileController = profileController;
             _heroDataSource = heroDataSource;
+            _unitStatProvider = unitStatProvider;
             _logger = logger;
         }
 
@@ -54,8 +55,8 @@ namespace MiniRPG.Metagame
                     ).ToArray()
                 ),
                 new PlayerInitData(
-                        1,
-                        new UnitInitData[] { UnitInitData.CreateFromHeroData(_heroDataSource.GetRandomEnemy(10)) }
+                    1,
+                    new UnitInitData[] { UnitInitData.CreateFromHeroData(_heroDataSource.GetRandomEnemy(profile.AverageHeroLevel * 2)) }
                 )
             );
         }
@@ -93,32 +94,28 @@ namespace MiniRPG.Metagame
 
                         //increase hero xp
                         _profileController.Update(new IncreaseHeroXP(unitResult.heroId, 1));
-                        _logger.Log($"Hero with name {hero.name} and id  {hero.heroId} got leveled up. \n new level : {hero.level}. new attack : {hero.attack}. new health: {hero.health}");
+                        _logger.Log($"Hero with name {hero.name} and id  {hero.heroId} got leveled up. \n new level : {hero.level}. new attack : {hero.stat.attack}. new health: {hero.stat.health}");
 
                         //handle hero level up
                         int heroTargetLevel = hero.experience / HERO_XP_TO_LEVEL + 1;
                         if (heroTargetLevel > hero.level)
                         {
-                            int levelIncrease = heroTargetLevel - hero.level;
+                            var oldStat = hero.stat;
+                            var newStat = _unitStatProvider.GetUnitStatByLevel(hero.baseStat, heroTargetLevel);
+
                             _profileController.Update(
                                 new IncrementHeroLevel(
                                     hero.heroId,
-                                    levelIncrease,
-                                    GetAttributeIncrease(hero.attack, levelIncrease),
-                                    GetAttributeIncrease(hero.health, levelIncrease)
+                                    heroTargetLevel - hero.level,
+                                    newStat.attack - oldStat.attack,
+                                    newStat.health - oldStat.health
                                 )
                             );
-                            _logger.Log($"Hero with name {hero.name} and id  {hero.heroId} got leveled up. \n new level : {hero.level}. new attack : {hero.attack}. new health: {hero.health}");
+                            _logger.Log($"Hero with name {hero.name} and id  {hero.heroId} got leveled up. \n new level : {hero.level}. new attack : {hero.stat.attack}. new health: {hero.stat.health}");
                         }
                     }
                 }
             }
-        }
-
-        public int GetAttributeIncrease(int attribute, int levelIncrease)
-        {
-            var factor = Math.Pow(1.1f, levelIncrease);
-            return (int)(factor * attribute) - attribute;
         }
     }
 } 

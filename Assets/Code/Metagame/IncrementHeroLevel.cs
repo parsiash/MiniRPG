@@ -23,8 +23,8 @@ namespace MiniRPG.Metagame
             }
 
             hero.level += levelIncrease;
-            hero.attack += attackIncrease;
-            hero.health += healthIncrease;
+            hero.stat.attack += attackIncrease;
+            hero.stat.health += healthIncrease;
 
             return true;
         }

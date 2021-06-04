@@ -1,3 +1,4 @@
+using MiniRPG.BattleLogic;
 using MiniRPG.Common;
 using MiniRPG.Metagame;
 using UnityEngine;
@@ -12,24 +13,38 @@ namespace MiniRPG
 
     public class HeroDataSource : IHeroDataSource
     {
+        private IUnitStatProvider unitStatProvider;
         private HeroTemplatesAsset heroTemplatesAsset;
         private Common.ILogger logger;
 
-        public HeroDataSource(HeroTemplatesAsset heroTemplatesAsset, Common.ILogger logger)
+        public HeroDataSource(IUnitStatProvider unitStatProvider, HeroTemplatesAsset heroTemplatesAsset, Common.ILogger logger)
         {
+            this.unitStatProvider = unitStatProvider;
             this.heroTemplatesAsset = heroTemplatesAsset;
             this.logger = logger;
         }
 
+        private UnitStat GenerateBaseStat()
+        {
+            return new UnitStat
+            (
+                Random.Range(5, 10),
+                Random.Range(20, 30)
+            );
+        }
+
         public HeroData GetRandomEnemy(int level)
         {
+            UnitStat baseStat = GenerateBaseStat();
+            UnitStat currentStat = unitStatProvider.GetUnitStatByLevel(baseStat, level);
+            
             return new HeroData(
                 -1,
                 "Enemy",
-                Random.Range(1, 20),
-                Random.Range(1, 20),
-                Random.Range(10, 15),
-                Random.Range(20, 30),
+                level,
+                0,
+                baseStat,
+                currentStat,
                 MyColor.FromUnityColor(Color.red),
                 3
             );
@@ -37,14 +52,15 @@ namespace MiniRPG
         public HeroData GetRandomHero(int heroId)
         {
             var heroTemplate = heroTemplatesAsset.GetHeroTemplate(heroId);
+            UnitStat baseStat = GenerateBaseStat();
 
             return new HeroData(
                 heroId,
                 heroTemplate != null ? heroTemplate.name : "Hero_" + heroId,
-                Random.Range(1, 20),
-                Random.Range(1, 20),
-                Random.Range(10, 15),
-                Random.Range(20, 30),
+                1,
+                0,
+                baseStat,
+                baseStat,
                 MyColor.FromUnityColor(heroTemplate != null ? heroTemplate.color : Random.ColorHSV()),
                 1
             );

@@ -120,7 +120,16 @@ namespace MiniRPG.Battle
                             {
                                 attackerUnitView.Attack(
                                     targetUnitView,
-                                    () => targetUnitView.TakeDamage(attackResult.actualDamage),
+                                    () => {
+                                        targetUnitView.TakeDamage(attackResult.actualDamage);
+                                        _configuration.onScreenMessageFactory.ShowMessage(
+                                            new OnScreenMessage.Configuration(
+                                                "-" + attackResult.actualDamage,
+                                                Color.red,
+                                                targetUnitView.Position
+                                            )
+                                        );
+                                    },
                                     () => {
                                         //check battle finish
                                         if(_battleSimulation.IsFinished)

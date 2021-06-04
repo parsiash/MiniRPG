@@ -127,6 +127,11 @@ namespace MiniRPG.Menu
             );
         }
 
+        public void OnClearDataButtonClick()
+        {
+            GameManager.Instance.ClearAndReset();
+        }
+
         public async void OnStartBattleButtonClick()
         {
             var profile = metagameSimulation.User.Profile;

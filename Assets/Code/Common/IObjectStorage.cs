@@ -6,6 +6,7 @@ namespace MiniRPG.Common
     {
         void SaveObject(Type t, string name, object obj);
         object LoadObject(Type t, string name);
+        void Clear();
     }
 
     public static class ObjectStorageExtensions

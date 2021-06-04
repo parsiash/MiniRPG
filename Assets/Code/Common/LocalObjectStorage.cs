@@ -42,5 +42,10 @@ namespace MiniRPG.Common
                 logger.LogError($"Exception occured while saving object of type : {t} and name : {name} from local storage : \n {exp.Message} - \n {exp.StackTrace}");
             }
         }
+
+        public void Clear()
+        {
+            PlayerPrefs.DeleteAll();
+        }
     }
 }

@@ -7,6 +7,7 @@ namespace MiniRPG
     {
         UserProfile LoadUserProfile();
         void SaveUserProfile(UserProfile profile);
+        void ClearData();
     }
 
     public class PlayerDataRepository : IPlayerDataRepository
@@ -18,6 +19,11 @@ namespace MiniRPG
         {
             _objectStorage = objectStorage;
             _logger = logger;
+        }
+
+        public void ClearData()
+        {
+            _objectStorage.Clear();
         }
 
         public UserProfile LoadUserProfile()

@@ -24,7 +24,7 @@ namespace MiniRPG
         {
             if(Input.GetKeyDown(KeyCode.R))
             {
-                SceneManager.LoadScene(0);
+                ResetGame();
             }
         }
 #endif
@@ -79,6 +79,7 @@ namespace MiniRPG
                 heroAnouncementHandler,
                 onScreenMessageFactory,
                 heroInfoPopup,
+                playerDataRepository,
                 logger
             );
             
@@ -116,6 +117,17 @@ namespace MiniRPG
                 Random.Range(20, 30),
                 Random.Range(20, 30)
             );
+        }
+
+        public void ClearAndReset()
+        {
+            game.playerDataRepository.ClearData();
+            ResetGame();
+        }
+
+        private static void ResetGame()
+        {
+            SceneManager.LoadScene(0);
         }
     }
 }

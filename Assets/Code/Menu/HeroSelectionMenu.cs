@@ -15,20 +15,24 @@ namespace MiniRPG.Menu
         {
             public IHeroAnouncementHandler heroAnouncementHandler { get; set; }
             public IOnScreenMessageFactory onScreenMessageFactory { get; set; }
+            public HeroInfoPopup heroInfoPopup { get; set; }
 
             public LoadData(
                 IMetagameSimulation metagameSimulation, 
                 IHeroAnouncementHandler heroAnouncementHandler,
-                IOnScreenMessageFactory onScreenMessageFactory) : base(metagameSimulation)
+                IOnScreenMessageFactory onScreenMessageFactory,
+                HeroInfoPopup heroInfoPopup) : base(metagameSimulation)
             {
                 this.heroAnouncementHandler = heroAnouncementHandler;
                 this.onScreenMessageFactory = onScreenMessageFactory;
+                this.heroInfoPopup = heroInfoPopup;
             }
         }
 
         private HeroListPanel heroListPanel => RetrieveCachedComponentInChildren<HeroListPanel>();
         private IHeroAnouncementHandler _heroAnouncementHandler;
         private IOnScreenMessageFactory _onScreenMessageFactory;
+        private HeroInfoPopup _heroInfoPopup;
 
         public override async Task<bool> OnLoaded(INavigator parentNavigator, INavigationData data)
         {
@@ -41,6 +45,8 @@ namespace MiniRPG.Menu
             }
 
             InitializeHeroListPanel();
+
+            _heroInfoPopup = loadData.heroInfoPopup;
 
             //show hero anouncements
             _onScreenMessageFactory = loadData.onScreenMessageFactory;
@@ -85,7 +91,8 @@ namespace MiniRPG.Menu
                     (hero) => new HeroButtonConfiguration(
                         profile.deck.ContainsHero(hero.heroId),
                         hero,
-                        OnHeroButtonClick
+                        OnHeroButtonClick,
+                        OnHeroButtonHold
                     )
             ));
         }
@@ -110,6 +117,22 @@ namespace MiniRPG.Menu
                     heroButton.Selected = true;
                 }
             }
+        }
+
+        public void OnHeroButtonHold(HeroButton heroButton)
+        {
+            var hero = heroButton.Hero;
+
+            _heroInfoPopup.ShowPopup(
+                new HeroInfo(
+                    new HeroInfoAttribute("Name", hero.name),
+                    new HeroInfoAttribute("Level", hero.level),
+                    new HeroInfoAttribute("Experience", hero.experience),
+                    new HeroInfoAttribute("Attack", hero.attack),
+                    new HeroInfoAttribute("Health", hero.health)
+                ),
+                heroButton.rectTranform.GetWorldPosition()
+            );
         }
 
         public async void OnStartBattleButtonClick()
@@ -147,7 +170,7 @@ namespace MiniRPG.Menu
 
             //@TODO; this is a hack, everything should go in a battle loader component
             await GameManager.Instance.rootNavigator.ShowPage<Menu.HeroSelectionMenu>(
-                new LoadData(metagameSimulation, _heroAnouncementHandler, _onScreenMessageFactory)
+                new LoadData(metagameSimulation, _heroAnouncementHandler, _onScreenMessageFactory, _heroInfoPopup)
             );
         }
 

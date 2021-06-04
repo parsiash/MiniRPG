@@ -65,6 +65,8 @@ namespace MiniRPG
 
             var onScreenMessageFactory = new OnScreenMessageFactory(onScreenMessagePrefab);
 
+            var heroInfoPopup = Object.FindObjectOfType(typeof(HeroInfoPopup), true) as HeroInfoPopup;
+
 
             game = new Game(
                 new MetagameSimulation(
@@ -76,6 +78,7 @@ namespace MiniRPG
                 ),
                 heroAnouncementHandler,
                 onScreenMessageFactory,
+                heroInfoPopup,
                 logger
             );
             
@@ -85,7 +88,8 @@ namespace MiniRPG
                 new Menu.HeroSelectionMenu.LoadData(
                     game.metagameSimulation,
                     game.heroAnouncementHandler,
-                    game.onScreenMessageFactory
+                    game.onScreenMessageFactory,
+                    game.heroInfoPopup
                 )
             );
         }

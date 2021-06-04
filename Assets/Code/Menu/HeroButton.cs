@@ -1,3 +1,4 @@
+using MiniRPG.Common;
 using MiniRPG.Metagame;
 using MiniRPG.UI;
 using System;
@@ -11,12 +12,14 @@ namespace MiniRPG.Menu
         public bool selected { get; set; }
         public ProfileHero hero { get; set; }
         public Action<HeroButton> OnClickCallback { get; set; }
+        public Action<HeroButton> OnHoldCallback { get; set; }
 
-        public HeroButtonConfiguration(bool selected, ProfileHero hero, Action<HeroButton> OnClickCallback)
+        public HeroButtonConfiguration(bool selected, ProfileHero hero, Action<HeroButton> onClickCallback, Action<HeroButton> onHoldCallback)
         {
             this.selected = selected;
             this.hero = hero;
-            this.OnClickCallback = OnClickCallback;
+            OnClickCallback = onClickCallback;
+            OnHoldCallback = onHoldCallback;
         }
     }
 
@@ -26,6 +29,7 @@ namespace MiniRPG.Menu
         public ProfileHero Hero => _hero;
         private bool _selected;
         private Action<HeroButton> _onClickCallback;
+        private Action<HeroButton> _onHoldCallback;
 
         private const string ANIM_PARAM_SELECTED = "Selected";
         private Button button => RetrieveCachedComponentInChildren<Button>();
@@ -56,9 +60,11 @@ namespace MiniRPG.Menu
             _hero = configuration.hero;
             Selected = configuration.selected;
             _onClickCallback = configuration.OnClickCallback;
+            _onHoldCallback = configuration.OnHoldCallback;
 
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => OnButtonClick());
+
         }
 
         private void OnButtonClick()
@@ -66,6 +72,14 @@ namespace MiniRPG.Menu
             if(_onClickCallback != null)
             {
                 _onClickCallback(this);
+            }
+        }
+
+        public void OnHold()
+        {
+            if(_onHoldCallback != null)
+            {
+                _onHoldCallback(this);
             }
         }
     }

@@ -5,10 +5,10 @@ namespace MiniRPG.UI
         public string name { get; private set; }
         public string value { get; private set; }
 
-        public HeroInfoAttribute(string name, string value)
+        public HeroInfoAttribute(string name, object value)
         {
             this.name = name;
-            this.value = value;
+            this.value = value.ToString();
         }
     }
 }

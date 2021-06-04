@@ -60,7 +60,7 @@ namespace MiniRPG.UI
 
         public void OnClick()
         {
-            // SetActive(false);
+            SetActive(false);
         }
     }
 }

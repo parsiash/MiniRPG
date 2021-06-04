@@ -23,17 +23,17 @@ namespace MiniRPG.UI
 
     public class OnScreenMessageFactory : IOnScreenMessageFactory
     {
-        private OnScreenMessage _onScreenMessagePrefab;
+        private ObjectPool<OnScreenMessage> _objectPool;
 
-        public OnScreenMessageFactory(OnScreenMessage onScreenMessagePrefab)
+        public OnScreenMessageFactory(ObjectPool<OnScreenMessage> objectPool)
         {
-            _onScreenMessagePrefab = onScreenMessagePrefab;
+            _objectPool = objectPool;
         }
 
         public OnScreenMessage ShowMessage(OnScreenMessage.Configuration config)
         {
-            var onScreenMessage = GameObject.Instantiate<OnScreenMessage>(_onScreenMessagePrefab);
-            onScreenMessage.Show(config);
+            var onScreenMessage = _objectPool.RetrieveInstance(nameof(OnScreenMessage), true);
+            onScreenMessage.Show(config, () => _objectPool.TryPoolInstance(nameof(OnScreenMessage), onScreenMessage));
 
             return onScreenMessage;
         }

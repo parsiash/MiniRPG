@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace MiniRPG.UI
 {
-    public class UIComponent : CommonBehaviour
+    public class UIComponent : CommonBehaviour, IPoolable
     {
         public RectTransform rectTranform => RetrieveCachedComponent<RectTransform>();
 
@@ -33,6 +33,21 @@ namespace MiniRPG.UI
 
                 return _mainCamera;
             }
+        }
+
+        public string PrefabId { get; set; }
+        
+        public void OnCreated(string prefabId)
+        {
+            PrefabId = prefabId;
+        }
+
+        public void OnBeforePooled()
+        {
+        }
+
+        public void OnAfterRetrieved()
+        {
         }
 
         public void SetWorldPosition(Vector3 worldPos)

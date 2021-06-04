@@ -64,22 +64,6 @@ namespace MiniRPG
             return rootMenuLoader;
         }
 
-        private IUnitViewFactory ConfigureUnitViewFactory()
-        {
-            //initialize unit view object pool
-            var unitViewPool = ObjectPool<UnitView>.Instance;
-            var unitViewPrefab = Resources.Load<UnitView>("Entities/UnitView");
-            unitViewPool.AddPrefab(nameof(UnitView), unitViewPrefab);
-            unitViewPool.PrefallocateInstance(nameof(UnitView), 5);
-            _serviceCollection.AddService<ObjectPool<UnitView>>(unitViewPool);
-
-            //initialize unit view factory
-            var unitViewFactory = new UnitViewFactory(unitViewPool, _logger);
-            _serviceCollection.AddService<IUnitViewFactory>(unitViewFactory);
-
-            return unitViewFactory;
-        }
-
         private IMetagameSimulation ConfigureMetagameSimulation(IProfileController profileController, IHeroDataSource heroDataSource, IUnitStatProvider unitStatProvider)
         {
             IMetagameSimulation metagameSimulation =
@@ -105,10 +89,33 @@ namespace MiniRPG
 
         private IOnScreenMessageFactory ConfigureOnScreenMessageFactory()
         {
+            //initialize object pool
+            var objectPool = ObjectPool<OnScreenMessage>.Instance;
             var onScreenMessagePrefab = Resources.Load<OnScreenMessage>("OnScreenMessage");
-            IOnScreenMessageFactory onScreenMessageFactory = new OnScreenMessageFactory(onScreenMessagePrefab);
+            objectPool.AddPrefab(nameof(OnScreenMessage), onScreenMessagePrefab);
+            objectPool.PrefallocateInstance(nameof(OnScreenMessage), 10);
+            _serviceCollection.AddService<ObjectPool<OnScreenMessage>>(objectPool);
+
+            //initalize factory
+            IOnScreenMessageFactory onScreenMessageFactory = new OnScreenMessageFactory(objectPool);
             _serviceCollection.AddService<IOnScreenMessageFactory>(onScreenMessageFactory);
             return onScreenMessageFactory;
+        }
+
+        private IUnitViewFactory ConfigureUnitViewFactory()
+        {
+            //initialize unit view object pool
+            var unitViewPool = ObjectPool<UnitView>.Instance;
+            var unitViewPrefab = Resources.Load<UnitView>("Entities/UnitView");
+            unitViewPool.AddPrefab(nameof(UnitView), unitViewPrefab);
+            unitViewPool.PrefallocateInstance(nameof(UnitView), 5);
+            _serviceCollection.AddService<ObjectPool<UnitView>>(unitViewPool);
+
+            //initialize unit view factory
+            var unitViewFactory = new UnitViewFactory(unitViewPool, _logger);
+            _serviceCollection.AddService<IUnitViewFactory>(unitViewFactory);
+
+            return unitViewFactory;
         }
 
         private IHeroAnouncementHandler ConfigureHeroAnouncementHandler(IProfileController profileController)

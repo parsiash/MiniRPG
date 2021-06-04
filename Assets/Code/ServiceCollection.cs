@@ -22,7 +22,7 @@ namespace MiniRPG
 
         private static string GetServiceName<T>()
         {
-            return typeof(T).Name;
+            return typeof(T).FullName;
         }
 
         public void AddService<T>(T service)

@@ -27,7 +27,7 @@ namespace MiniRPG.UI
 
         private CustomText customText => RetrieveCachedComponentInChildren<CustomText>();
 
-        public void Show(Configuration config)
+        public void Show(Configuration config, System.Action OnDestroyCallback)
         {
             SetActive(false);
 
@@ -42,9 +42,10 @@ namespace MiniRPG.UI
             sequence.AppendInterval(config.delay);
             sequence.AppendCallback(() => SetActive(true));
             sequence.Append(customText.DOFade(0, config.fadeTime));
-            sequence.AppendCallback(() => GameObject.Destroy(gameObject));
+            sequence.AppendCallback(() => OnDestroyCallback());
 
             transform.DOMoveY(transform.position.y + 1, 1);
         }
+
     }
 }

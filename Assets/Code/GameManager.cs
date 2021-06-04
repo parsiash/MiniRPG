@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MiniRPG.BattleLogic;
 using MiniRPG.Common;
+using MiniRPG.Menu;
 using MiniRPG.Metagame;
 using MiniRPG.Navigation;
 using MiniRPG.UI;
@@ -29,8 +30,8 @@ namespace MiniRPG
         }
 #endif
 
-        public Game game { get; private set; }
         public INavigator rootNavigator { get; private set; }
+        private IPlayerDataRepository playerDataRepository;
 
         [SerializeField] private OnScreenMessage onScreenMessagePrefab;
 
@@ -46,7 +47,7 @@ namespace MiniRPG
             IHeroDataSource heroDataSource = new HeroDataSource(HeroTemplatesAsset.Instance, logger);
 
             //create the game object
-            var playerDataRepository = new PlayerDataRepository(LocalObjectStorage.Instance, logger);
+            playerDataRepository = new PlayerDataRepository(LocalObjectStorage.Instance, logger);
             var profile = playerDataRepository.LoadUserProfile();
             if(profile == null)
             {
@@ -70,7 +71,7 @@ namespace MiniRPG
             var heroInfoPopup = Object.FindObjectOfType(typeof(HeroInfoPopup), true) as HeroInfoPopup;
 
 
-            game = new Game(
+            IMetagameSimulation metagameSimulation = 
                 new MetagameSimulation(
                     new User(
                         profile
@@ -78,24 +79,17 @@ namespace MiniRPG
                     profileController,
                     heroDataSource,
                     logger
-                ),
+                );
+            
+            var rootMenuLoader = new RootMenuLoader(
+                rootNavigator,
+                metagameSimulation,
                 heroAnouncementHandler,
                 onScreenMessageFactory,
-                heroInfoPopup,
-                playerDataRepository,
-                logger
+                heroInfoPopup
             );
-            
 
-            //show hero selection menu
-            await rootNavigator.ShowPage<Menu.HeroSelectionMenu>(
-                new Menu.HeroSelectionMenu.LoadData(
-                    game.metagameSimulation,
-                    game.heroAnouncementHandler,
-                    game.onScreenMessageFactory,
-                    game.heroInfoPopup
-                )
-            );
+            await rootMenuLoader.LoadHeroSelectionMenu();
         }
 
          private T FindPage<T>() where T : NavigationPageBase
@@ -112,7 +106,7 @@ namespace MiniRPG
 
         public void ClearAndReset()
         {
-            game.playerDataRepository.ClearData();
+            playerDataRepository.ClearData();
             ResetGame();
         }
 

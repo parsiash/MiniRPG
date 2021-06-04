@@ -1,6 +1,5 @@
 using MiniRPG.BattleLogic;
 using MiniRPG.Common;
-using MiniRPG.Metagame;
 using MiniRPG.Navigation;
 using MiniRPG.UI;
 using System.Linq;
@@ -11,24 +10,6 @@ namespace MiniRPG.Menu
 {
     public class HeroSelectionMenu : MenuPageBase
     {
-        public class LoadData : MenuLoadData
-        {
-            public IHeroAnouncementHandler heroAnouncementHandler { get; set; }
-            public IOnScreenMessageFactory onScreenMessageFactory { get; set; }
-            public HeroInfoPopup heroInfoPopup { get; set; }
-
-            public LoadData(
-                IMetagameSimulation metagameSimulation, 
-                IHeroAnouncementHandler heroAnouncementHandler,
-                IOnScreenMessageFactory onScreenMessageFactory,
-                HeroInfoPopup heroInfoPopup) : base(metagameSimulation)
-            {
-                this.heroAnouncementHandler = heroAnouncementHandler;
-                this.onScreenMessageFactory = onScreenMessageFactory;
-                this.heroInfoPopup = heroInfoPopup;
-            }
-        }
-
         private HeroListPanel heroListPanel => RetrieveCachedComponentInChildren<HeroListPanel>();
         private IHeroAnouncementHandler _heroAnouncementHandler;
         private IOnScreenMessageFactory _onScreenMessageFactory;
@@ -38,7 +19,7 @@ namespace MiniRPG.Menu
         {
             await base.OnLoaded(parentNavigator, data);
 
-            var loadData = data as LoadData;
+            var loadData = data as HeroSelectionMenuLoadData;
             if (loadData == null)
             {
                 throw new NavigationException($"Loading Hero Selection Page failed. No load data is provided to {nameof(OnLoaded)} method.");
@@ -162,10 +143,7 @@ namespace MiniRPG.Menu
         {
             metagameSimulation.OnBattleResult(battleResult);
 
-            //@TODO; this is a hack, everything should go in a battle loader component
-            await GameManager.Instance.rootNavigator.ShowPage<Menu.HeroSelectionMenu>(
-                new LoadData(metagameSimulation, _heroAnouncementHandler, _onScreenMessageFactory, _heroInfoPopup)
-            );
+            await menuLoader.LoadHeroSelectionMenu();
         }
     }
 }

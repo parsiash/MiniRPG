@@ -7,6 +7,7 @@ namespace MiniRPG
     public class ProfileController : IProfileController
     {
         private UserProfile _profile;
+        public UserProfile Profile => _profile;
         private IPlayerDataRepository _playerDataRepository;
         private ILogger _logger;
         private IList<IProfileUpdateListener> _updateListeners;

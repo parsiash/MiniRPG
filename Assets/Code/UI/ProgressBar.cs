@@ -17,7 +17,7 @@ namespace MiniRPG.UI
 
         [Header("Amount of time to fill a whole bar")]
         [SerializeField] protected float fillingTime = 1f;
-        private Tweener _fillingTweener;
+        private Sequence _fillingSequence;
 
         public void Init(float maxValue, float initialValue)
         {
@@ -31,29 +31,38 @@ namespace MiniRPG.UI
             fillImage.fillAmount = Progress;
         }
 
-        public void Subtract(float amount)
+        public void Subtract(float amount, System.Action OnFinishCallback = null)
         {
-            FillTo(_currentValue - amount);
+            FillTo(_currentValue - amount, OnFinishCallback);
         }
 
-        public void FillTo(float targetValue)
+        public void FillTo(float targetValue, System.Action OnFinishCallback)
         {
             StopFilling();
 
-            _fillingTweener = DOTween.To(
-                () => _currentValue,
-                (v) => SetValue(v),
-                targetValue,
-                Mathf.Max((targetValue - _currentValue) / _maxValue * fillingTime, 0.5f)
+            _fillingSequence = DOTween.Sequence();
+            
+            _fillingSequence.Append(
+                DOTween.To(
+                    () => _currentValue,
+                    (v) => SetValue(v),
+                    targetValue,
+                    Mathf.Max((targetValue - _currentValue) / _maxValue * fillingTime, 0.5f)
+                )
             );
+
+            if(OnFinishCallback != null)
+            {
+                _fillingSequence.AppendCallback(() => OnFinishCallback());
+            }
         }
 
         private void StopFilling()
         {
-            if(_fillingTweener != null)
+            if(_fillingSequence != null)
             {
-                _fillingTweener.Kill();
-                _fillingTweener = null;
+                _fillingSequence.Kill();
+                _fillingSequence = null;
             }
         }
     }

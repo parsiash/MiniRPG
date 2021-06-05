@@ -11,6 +11,7 @@ namespace MiniRPG.BattleView
     {
         void OnClick(IEntityView entityView);
         void OnHold(IEntityView entityView);
+        void OnEntityDestroy(IEntityView entityView);
     }
 
     public interface IUnitView : IEntityView
@@ -119,11 +120,24 @@ namespace MiniRPG.BattleView
 
         public virtual void TakeDamage(int damage)
         {
-            infoUI.TakeDamage(damage);
+            infoUI.TakeDamage(
+                damage,
+                () => {
+                    if(_unit.IsDead)
+                    {
+                        _eventListener.OnEntityDestroy(this);
+                    }
+                }
+            );
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            if(_unit.IsDead)
+            {
+                return;
+            }
+            
             _eventListener?.OnClick(this);
         }
 

@@ -14,9 +14,9 @@ namespace MiniRPG.BattleView
             healthBar.Init(maxHealth, initialHealth);
         }
 
-        public void TakeDamage(int damage)
+        public void TakeDamage(int damage, System.Action OnFinishCallback = null)
         {
-            healthBar.Subtract(damage);
+            healthBar.Subtract(damage, OnFinishCallback);
         }
 
         public void SetVisible(bool visible)

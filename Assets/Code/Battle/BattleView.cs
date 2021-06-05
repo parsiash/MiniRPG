@@ -156,5 +156,17 @@ namespace MiniRPG.BattleView
                 _battleActionListener.OnUnitViewHold(entityView as IUnitView);
             }
         }
+
+        public void OnEntityDestroy(IEntityView entityView)
+        {
+            //remove from entity view collection
+            var entityId = entityView.Entity.id;
+            if(_entityViews.ContainsKey(entityId))
+            {
+                _entityViews.Remove(entityId);
+            }
+
+            DestroyEntityView(entityView);
+        }
     }
 }
